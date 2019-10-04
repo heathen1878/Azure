@@ -26,18 +26,27 @@ provider "azurerm" {
 }
 
 # Resources
-resource "azurerm_resource_group" "myRG" {
+resource "azurerm_resource_group" "djc-ne-dev-it-vms-int-RG" {
 
-    name = "myRG"
+    name = "djc-ne-dev-it-vms-int-RG"
     location = "northeurope"
 
     tags = {
-        Environment = "Learning"
+        Environment = "Training"
     }
+}
+
+resource "azurerm_storage_account" "djcnedevvmswinint00" {
+    name = "djcnedevvmswinint00"
+    resource_group_name = "${azurerm_resource_group.djc-ne-dev-it-vms-int-RG.name}"
+    location = "${azurerm_resource_group.djc-ne-dev-it-vms-int-RG.location}"
+    account_tier = "standard"
+    account_replication_type = "LRS"
 }
 
 # Output
 # output the name of the new resource group
 output "resource_group_name" {
-    value = "${azurerm_resource_group.myRG.name}"
+    value = "${azurerm_resource_group.djc-ne-dev-it-vms-int-RG.name}"
 }
+

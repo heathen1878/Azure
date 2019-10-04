@@ -1,17 +1,3 @@
-# Variables
-variable "My_Subscription_Id" {
-  
-}
-variable "My_Client_Id" {
-  
-}
-variable "My_Client_Secret" {
-  
-}
-variable "My_Tenant_Id" {
-  
-}
-
 # Providers
 # Azure RM
 provider "azurerm" {
@@ -26,23 +12,30 @@ provider "azurerm" {
 }
 
 # Resources
-data 
+resource "azurerm_resource_group" "djc-ne-training-it-vms-int-RG" {
 
-
-resource "azurerm_resource_group" "myRG" {
-
-    name = "myRG"
-    location = "northeurope"
-
-    tags = {
-        Environment = "Learning"
-    }
+    name = "${var.RG}"
+    location = "${var.location}"
+    tags = "${var.tags}"
 }
 
-
+resource "azurerm_storage_account" "djcnetrainingvmsint0" {
+    name = "djcne${var.tags["environment"]}vmsint0"
+    resource_group_name = "${azurerm_resource_group.djc-ne-training-it-vms-int-RG.name}"
+    location = "${azurerm_resource_group.djc-ne-training-it-vms-int-RG.location}"
+    account_tier = "standard"
+    account_replication_type = "LRS"
+    tags = "${azurerm_resource_group.djc-ne-training-it-vms-int-RG.tags}"
+}
 
 # Output
 # output the name of the new resource group
 output "resource_group_name" {
-    value = "${azurerm_resource_group.myRG.name}"
+    value = "${azurerm_resource_group.djc-ne-training-it-vms-int-RG.name}"
 }
+
+output "locations" {
+  value = "${length(var.webAppLocations)}"
+}
+
+

@@ -1,2 +1,2 @@
 # Azure
-Learning Azure RM
+Learning Terraform with Azure.

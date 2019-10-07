@@ -67,5 +67,5 @@ variable "Location" {
 }
 
 variable "WebAppLocations" {
-    default = ["northeurope","westeurope","uksouth","westuk"]  
+    default = ["northeurope","westeurope","uksouth","ukwest"]  
 }

@@ -15,7 +15,7 @@ resource "random_string" "WebAppRandomGen" {
 }
 
 resource "azurerm_app_service_plan" "WebAppPlan" {
-    name = "DJC-${var.WebAppLocations[count.index]}-TRAIN-IT-WEBAPP-ASP"
+    name = "DJC-${upper(var.WebAppLocations[count.index])}-TRAIN-IT-WEBAPP-ASP"
     count = "${length(var.WebAppLocations)}"
     resource_group_name = "${azurerm_resource_group.WebApps.name}"
     location = "${var.WebAppLocations[count.index]}"
@@ -23,13 +23,13 @@ resource "azurerm_app_service_plan" "WebAppPlan" {
 
     kind = "Windows"
     sku {
-        tier = "Standard"
-        size = "S1"
+        tier = "${var.WebAppConfiguration.tier}"
+        size = "${var.WebAppConfiguration.size}"
     }
 }
 
 resource "azurerm_app_service" "WebApp" {
-    name = "DJC-${var.WebAppLocations[count.index]}-TRAIN-IT-WEBAPP-${random_string.WebAppRandomGen.result}"
+    name = "DJC-${upper(var.WebAppLocations[count.index])}-TRAIN-IT-WEBAPP-${random_string.WebAppRandomGen.result}"
     count = "${length(var.WebAppLocations)}"
     location = "${var.WebAppLocations[count.index]}"
     resource_group_name = "${azurerm_resource_group.WebApps.name}"

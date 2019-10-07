@@ -44,6 +44,23 @@ variable "NSGTags" {
     }
 }
 
+variable "WebAppTags" {
+    type = "map"
+    default = {
+        Environment = "Training" 
+        MaintenanceWindows = ""
+        ExpirationDate = ""
+        TimeWindow = ""
+        Department = ""
+        ApplicationName = "Web"
+        CostCenter = "IT"
+        Description = "Resource group for Web Applications"
+        TechnicalContact = "Cloud Engineering"
+        DataClassification = "Internal Use Only"
+        RegulatoryCompliance = ""
+    }
+}
+
 variable "Location" {
     description = "Default Azure Region"
     default = "North Europe"
@@ -52,8 +69,3 @@ variable "Location" {
 variable "WebAppLocations" {
     default = ["northeurope","westeurope","uksouth","westuk"]  
 }
-
-
-
-
-  

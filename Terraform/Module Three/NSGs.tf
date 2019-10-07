@@ -6,14 +6,14 @@ resource "azurerm_resource_group" "NSGs" {
 }
 
 resource "azurerm_network_security_group" "DefaultNSGs" {
-    name = "DefaultNSG"
+    name = "DJC-NE-TRAIN-DEFAULT-NSG"
     resource_group_name = "${azurerm_resource_group.NSGs.name}"
     location = "${azurerm_resource_group.NSGs.location}"
     tags = "${azurerm_resource_group.NSGs.tags}"
 }
 
 resource "azurerm_network_security_rule" "AllowHTTP" {
-    name = "AllowHTTP"
+    name = "ALLOW-IN-EXT-HTTP"
     resource_group_name = "${azurerm_resource_group.NSGs.name}"
     network_security_group_name = "${azurerm_network_security_group.DefaultNSGs.name}"
 
@@ -28,7 +28,7 @@ resource "azurerm_network_security_rule" "AllowHTTP" {
 }
 
 resource "azurerm_network_security_rule" "AllowHTTPS" {
-    name = "AllowHTTPS"
+    name = "ALLOW-IN-EXT-HTTPS"
     resource_group_name = "${azurerm_resource_group.NSGs.name}"
     network_security_group_name = "${azurerm_network_security_group.DefaultNSGs.name}"
 
@@ -42,7 +42,7 @@ resource "azurerm_network_security_rule" "AllowHTTPS" {
     source_address_prefix = "*"
 }
 resource "azurerm_network_security_rule" "AllowMSSQL" {
-    name = "AllowMSSQL"
+    name = "ALLOW-IN-EXT-MSSQL"
     resource_group_name = "${azurerm_resource_group.NSGs.name}"
     network_security_group_name = "${azurerm_network_security_group.DefaultNSGs.name}"
 
@@ -56,7 +56,7 @@ resource "azurerm_network_security_rule" "AllowMSSQL" {
     source_address_prefix = "*"
 }
 resource "azurerm_network_security_rule" "AllowRDP" {
-    name = "AllowRDP"
+    name = "ALLOW-IN-EXT-RDP"
     resource_group_name = "${azurerm_resource_group.NSGs.name}"
     network_security_group_name = "${azurerm_network_security_group.DefaultNSGs.name}"
 
@@ -71,13 +71,13 @@ resource "azurerm_network_security_rule" "AllowRDP" {
 }
 
 resource "azurerm_network_security_group" "WindowsNicNsg" {
-    name = "ApplyToWindowsServers"
+    name = "DJC-NE-TRAIN-WINDOWSSERVERS-NSG"
     resource_group_name = "${azurerm_resource_group.NSGs.name}"
     location = "${azurerm_resource_group.NSGs.location}"
     tags = "${azurerm_resource_group.NSGs.tags}"
 
     security_rule {
-       name = "AllowRDP"
+       name = "ALLOW-IN-EXT-RDP"
        priority = 100
         access = "Allow"
         direction = "Inbound"

@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "CoreNetworkingRG" {
 }
 
 resource "azurerm_public_ip" "publicIPAddress" {
-    name = "vpnGatewayPublicIPAddress"
+    name = "Gateway-PIP-1"
     resource_group_name = "${azurerm_resource_group.CoreNetworkingRG.name}"
     location = "${azurerm_resource_group.CoreNetworkingRG.location}"
     tags = "${azurerm_resource_group.CoreNetworkingRG.tags}"
@@ -14,7 +14,7 @@ resource "azurerm_public_ip" "publicIPAddress" {
 }
 
 resource "azurerm_virtual_network" "CoreVNet" {
-    name = "Core"
+    name = "DJC-NE-TRAIN-CORE-VNET-10.0.0.0-16"
     resource_group_name = "${azurerm_resource_group.CoreNetworkingRG.name}"
     location = "${azurerm_resource_group.CoreNetworkingRG.location}"
     tags = "${azurerm_resource_group.CoreNetworkingRG.tags}"
@@ -23,26 +23,26 @@ resource "azurerm_virtual_network" "CoreVNet" {
 }
 
 resource "azurerm_subnet" "Gateway" {
-    name = "Gateway"
+    name = "DJC-NE-TRAIN-CORE-SUB-GATEWAY-10.0.0.0-24"
     resource_group_name = "${azurerm_resource_group.CoreNetworkingRG.name}"
     virtual_network_name = "${azurerm_virtual_network.CoreVNet.name}"
     address_prefix = "10.0.0.0/24"
 }
 
 resource "azurerm_subnet" "Training" {
-    name = "Training"
+    name = "DJC-NE-TRAIN-CORE-SUB-TRAININ-10.0.1.0-24"
     resource_group_name = "${azurerm_resource_group.CoreNetworkingRG.name}"
     virtual_network_name = "${azurerm_virtual_network.CoreVNet.name}"
     address_prefix = "10.0.1.0/24"
 }
 
 resource "azurerm_subnet" "Development" {
-    name = "Development"
+    name = "DJC-NE-TRAIN-CORE-SUB-DEVELOPMENT-10.0.2.0-24"
     resource_group_name = "${azurerm_resource_group.CoreNetworkingRG.name}"
     virtual_network_name = "${azurerm_virtual_network.CoreVNet.name}"
     address_prefix = "10.0.2.0/24"
 }
-    
+/*    
 resource "azurerm_virtual_network_gateway" "CoreVNetGateway" {
     name = "CoreVNetGateway"
     resource_group_name = "${azurerm_resource_group.CoreNetworkingRG.name}"
@@ -60,5 +60,6 @@ resource "azurerm_virtual_network_gateway" "CoreVNetGateway" {
         subnet_id = "${azurerm_subnet.Gateway.id}"
     }
 }
+*/
 
 

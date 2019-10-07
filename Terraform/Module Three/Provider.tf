@@ -10,10 +10,3 @@ provider "azurerm" {
     client_secret = "${var.My_Client_Secret}"
     tenant_id = "${var.My_Tenant_Id}"
 }
-
-# Resources
-resource "azurerm_resource_group" "CoreNetworkingRG" {
-    name = "DJC-NE-TRAIN-IT-NET-INT-RG"
-    location = "${var.Location}"
-    tags = "${var.NSGTags}"
-}

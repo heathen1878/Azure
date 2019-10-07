@@ -63,9 +63,17 @@ variable "WebAppTags" {
 
 variable "Location" {
     description = "Default Azure Region"
-    default = "North Europe"
+    default = ""
 }
 
 variable "WebAppLocations" {
-    default = ["northeurope","westeurope","uksouth","ukwest"]  
+    default = []  
+}
+
+variable "WebAppConfiguration" {
+    type = "map"
+    default = {
+        tier = "Free"
+        size = "F1"
+    }
 }

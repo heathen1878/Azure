@@ -1,0 +1,9 @@
+# Create a resource group
+az group create -l northeurope -n DJC-NE-TRAIN-TFSTATE
+
+# Create a storage account
+az storage account create -n "terraformtfstate..." -g DJC-NE-TRAIN-TFSTATE -l northeurope --sku Standard_LRS --kind StorageV2
+
+# Create a container
+az storage container create -n terraformtfsstate --account-name "storage account name from above" --account-key "access key from storage account above"
+

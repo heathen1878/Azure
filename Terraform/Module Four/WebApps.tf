@@ -15,9 +15,10 @@ resource "random_string" "WebAppRandomGen" {
 }
 
 resource "azurerm_app_service_plan" "WebAppPlan" {
-    name = "DJC-NE-TRAIN-IT-WEBAPP-ASP"
+    name = "DJC-${var.WebAppLocations[count.index]}-TRAIN-IT-WEBAPP-ASP"
+    count = "${length(var.WebAppLocations)}"
     resource_group_name = "${azurerm_resource_group.WebApps.name}"
-    location = "${azurerm_resource_group.WebApps.location}"
+    location = "${var.WebAppLocations[count.index]}"
     tags = "${azurerm_resource_group.WebApps.tags}"
 
     kind = "Windows"
@@ -28,10 +29,11 @@ resource "azurerm_app_service_plan" "WebAppPlan" {
 }
 
 resource "azurerm_app_service" "WebApp" {
-    name = "DJC-NE-TRAIN-IT-WEBAPP-${random_string.WebAppRandomGen.result}"
-    location = "${azurerm_resource_group.WebApps.location}"
+    name = "DJC-${var.WebAppLocations[count.index]}-TRAIN-IT-WEBAPP-${random_string.WebAppRandomGen.result}"
+    count = "${length(var.WebAppLocations)}"
+    location = "${var.WebAppLocations[count.index]}"
     resource_group_name = "${azurerm_resource_group.WebApps.name}"
     tags = "${azurerm_resource_group.WebApps.tags}"
 
-    app_service_plan_id = "${azurerm_app_service_plan.WebAppPlan.id}"
+    app_service_plan_id = "${element(azurerm_app_service_plan.WebAppPlan.*.id,count.index)}"
 }

@@ -19,8 +19,16 @@ resource "azurerm_resource_group" "djc-ne-training-it-vms-int-RG" {
     tags = "${var.tags}"
 }
 
+resource "random_string" "randomGen" {
+    
+    length = 8
+    upper = false
+    special = false
+
+}
+
 resource "azurerm_storage_account" "djcnetrainingvmsint0" {
-    name = "djcne${var.tags["environment"]}vmsint0"
+    name = "djc${var.tags["environment"]}${random_string.randomGen.result}"
     resource_group_name = "${azurerm_resource_group.djc-ne-training-it-vms-int-RG.name}"
     location = "${azurerm_resource_group.djc-ne-training-it-vms-int-RG.location}"
     account_tier = "standard"

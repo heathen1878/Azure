@@ -3,3 +3,4 @@ terraform.tfstate
 terraform.tfstate.backup
 serviceprincipal.tf
 Terraform/*/Backend.tf
+terraform.customrole.json

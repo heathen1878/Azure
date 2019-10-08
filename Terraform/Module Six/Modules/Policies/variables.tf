@@ -4,10 +4,10 @@ variable "policyScope" {
 
 variable "tagName" {
     type = "string"
-    default = ""
+    default = "Name"
 }
 
 variable "tagValue" {
     type = "string"
-    default = ""
+    default = "Value"
 }

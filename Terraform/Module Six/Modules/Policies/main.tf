@@ -7,11 +7,11 @@ data "azurerm_resource_group" "resourceGroup" {
 }
 
 resource "azurerm_policy_assignment" "TaggingOnRGs" {
-    name = "Ensure-RGs-have-tags-in-place"
+    name = "Require tag and its value on resource groups"
     scope = "${data.azurerm_resource_group.resourceGroup.id}"
     policy_definition_id = "${data.azurerm_policy_definition.TaggingOnRGs.id}"
-    description = "Ensures mandatory tags are in place for RGs"
-    display_name = "Ensure RG has tags"
+    description = "Enforces a required tag and its value on resource groups."
+    display_name = "Require tag and its value on resource groups"
 
     parameters = <<PARAMETERS
     {

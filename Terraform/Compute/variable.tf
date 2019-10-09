@@ -1,41 +1,35 @@
 # Variables
-variable "My_Subscription_Id" {
+
+variable "subscription_id" {
     description = "Your Azure subscription ID"
 }
-variable "My_Client_Id" {
+variable "client_id" {
     description = "Your service prinicpal ID for auth"
 }
-variable "My_Client_Secret" {
+variable "client_secret" {
     description = "Your service prinicpal password for auth"
 }
-variable "My_Tenant_Id" {
+variable "tenant_id" {
     description = "Your Azure subscription tenant ID"
 }
-
-variable "My_Storage_Account" {
+variable "storage_account" {
     description = "the storage account name for holding Terraform state"
 }
-
-variable "My_Container_Name" {
+variable "container_name" {
     description = "the storage account container for holding terraform state"
 }
-
-variable "My_Terraform_State_FileName" {
+variable "terraform_state_filename" {
     description = "the terraform state file name"
 }
-
-variable "My_Storage_Account_AccessKey" {
+variable "storage_account_accesskey" {
     description = "the storage account access key for the storage account which contains Terraform state"
 }
-
 variable "My_NetworkRGName" { 
     description = "The name of your Resource Group for Network components e.g. <company identifier>-<Cloud Region>-<environment>-<team>-<purpose>-<internal/external>-RG"
 }
-
 variable "My_NetworkRGLocation" {
     description = "the Azure location for the resource group metadata"
 }
-
 variable "My_NetworkRGTags" {
     type = "map"
     description = "list of tags for the Network Resource Group"
@@ -43,7 +37,6 @@ variable "My_NetworkRGTags" {
         environment = ""
         maintenanceWindow = ""
         expirationDate = ""
-        timeWindow = ""
         department = ""
         applicationName = ""
         costCentre = ""
@@ -54,6 +47,7 @@ variable "My_NetworkRGTags" {
     }
 }
 
+/*timeWindow = ""*/
 
 
 

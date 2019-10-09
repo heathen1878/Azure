@@ -1,28 +1,31 @@
-# Modules
-
-module "Provider" {
-    source = "../modules/provider"  
-    My_Subscription_Id = "${var.My_Subscription_Id}"
-    My_Client_Id = "${var.My_Client_Id}"
-    My_Client_Secret = "${var.My_Client_Secret}"
-    My_Tenant_Id = "${var.My_Tenant_Id}"
+# backend
+terraform {
+    backend "azurerm" {
+        storage_account_name = "${var.storage_account}"
+        container_name = "${var.container_name}"
+        key = "${var.terraform_state_filename}"
+        access_key = "${var.storage_account_accesskey}"
+    }
 }
 
-module "TerraformState" {
-    source = "../modules/backend"
-    storageAccount = "${var.My_Storage_Account}"
-    containerName = "${var.My_Container_Name}"
-    terraformStateFileName = "${var.My_Terraform_State_FileName}"
-    storageAccountAccessKey = "${var.My_Storage_Account_AccessKey}"
+# Providers
+provider "azurerm" {
+    version = "~> 1.34"
+
+    # consume variables passed through from main.tf
+    subscription_id = "${var.subscription_id}"
+    client_id = "${var.client_id}"
+    client_secret = "${var.client_secret}"
+    tenant_id = "${var.tenant_id}"
 }
 
 module "NetworkRG" {
-    source = "../modules/ResourceGroups"
-    ResourceGroupName = ""
-    Location = ""
-    Tags = ""
+    source = "../Modules/ResourceGroup"
+    ResourceGroupName = "${var.My_NetworkRGName}"
+    Location = "${var.My_NetworkRGLocation}"
+    Tags = "${var.My_NetworkRGTags}"
 }
-
+/*
 module "NSGsRG" {
     source = "../modules/ResourceGroups"
     ResourceGroupName = ""
@@ -43,4 +46,4 @@ module "VMRG" {
     Location = ""
     Tags = ""
 }
-
+*/

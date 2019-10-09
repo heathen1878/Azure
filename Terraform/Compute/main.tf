@@ -15,3 +15,32 @@ module "TerraformState" {
     terraformStateFileName = "${var.My_Terraform_State_FileName}"
     storageAccountAccessKey = "${var.My_Storage_Account_AccessKey}"
 }
+
+module "NetworkRG" {
+    source = "../modules/ResourceGroups"
+    ResourceGroupName = ""
+    Location = ""
+    Tags = ""
+}
+
+module "NSGsRG" {
+    source = "../modules/ResourceGroups"
+    ResourceGroupName = ""
+    Location = ""
+    Tags = ""
+}
+
+module "StorageRG" {
+    source = "../modules/ResourceGroups"
+    ResourceGroupName = ""
+    Location = ""
+    Tags = ""
+}
+
+module "VMRG" {
+    source = "../modules/ResourceGroups"
+    ResourceGroupName = ""
+    Location = ""
+    Tags = ""
+}
+

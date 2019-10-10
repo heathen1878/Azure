@@ -4,6 +4,33 @@ resource "azurerm_resource_group" "NetworkRG" {
     tags = "${var.NetworkRGTags}"
 }
 
+data "azurerm_policy_definition" "RequireTagsOnRG" {
+    display_name = "Require tag and its value on resource groups"
+    depends_on = ["azurerm_resource_group.NetworkRG"]
+}
+
+resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
+    for_each = "${var.NetworkRGTags}"
+    name = "Require ${each.key} and its value on resource groups"
+    scope = "${azurerm_resource_group.NetworkRG.id}"
+    policy_definition_id = "${data.azurerm_policy_definition.RequireTagsOnRG.id}"
+    description = "Enforces a required tag and its value on resource groups."
+    display_name = "Require ${each.key} and its value on resource groups"
+
+    parameters = <<PARAMETERS
+    {
+        "tagName": {
+            "value": "${each.key}"
+        },
+        "tagValue": {
+            "value": "${each.value}"
+        }    
+    }
+    PARAMETERS
+
+    depends_on = ["azurerm_resource_group.NetworkRG"]
+}
+
 resource "azurerm_virtual_network" "VNet" {
     name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-VNET-${replace(upper(var.VNetAddressSpace[0]),"/","-")}"
     resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
@@ -33,9 +60,8 @@ EOT
     address_prefix = "${each.value}"
 }
      
-  
 data "azurerm_subnet" "gateway" {
-    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-GATEWAY-10.0.1.0-24"
+    name = "GatewaySubnet"
     virtual_network_name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-VNET-${replace(upper(var.VNetAddressSpace[0]),"/","-")}"
     resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
     depends_on = ["azurerm_subnet.Subnet"]

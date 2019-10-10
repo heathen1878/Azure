@@ -10,17 +10,6 @@ variable "NetworkRGLocation" {
 variable "NetworkRGTags" {
     type = "map"
     description = "list of tags for the Network Resource Group"
-    default = {
-        maintenanceWindow = ""
-        expirationDate = ""
-        department = ""
-        applicationName = ""
-        costCentre = ""
-        description = ""
-        technicalContact = ""
-        dataClassification = ""
-        regulatoryCompliance = ""
-    } 
 }
 variable "VNetAddressSpace" {
     type = "list"

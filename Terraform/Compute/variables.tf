@@ -17,9 +17,4 @@ variable "NetworkRGLocation" {}
 variable "NetworkRGTags" {}
 variable "VNetAddressSpace" {}
 variable "VNetDNSServers" {}
-variable "AddressPrefix" {
-    type = "map"
-    default = {
-        subnet1 = "0.0.0.0/0"
-    }
-}
+variable "AddressPrefix" {}

@@ -16,7 +16,8 @@
         "Microsoft.Authorization/policyDefinitions/delete",
         "Microsoft.Authorization/policySetDefinitions/write",
         "Microsoft.Authorization/policySetDefinitions/delete",
-        "Microsoft.Authorization/elevateAccess/Action"
+        "Microsoft.Authorization/elevateAccess/Action",
+        "Microsoft.Authorization/locks/delete"
     ],
     "DataActions": [],
     "NotDataActions": [],

@@ -1,7 +1,12 @@
-
+/* 
+Get the resource Id for the group we are working on
+*/
 data "azuread_group" "group_object" {
     name = "${var.group_object}"
 }
+/*
+Get the resource Id for the member we are working on.
+*/
 
 data "azuread_group" "member_object" {
     name = "${var.member_object}"
@@ -18,3 +23,4 @@ resource "azuread_group" "group_membership" {
     members = [ "${data.azuread_group.member_object.id}" ]
 }
 */
+

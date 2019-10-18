@@ -18,3 +18,11 @@ variable "NetworkRGTags" {}
 variable "VNetAddressSpace" {}
 variable "VNetDNSServers" {}
 variable "AddressPrefix" {}
+variable "VMRGLocation" {}
+variable "VMRGTags" {}
+variable "WinVirtualMachines" {
+    type = "map"
+}
+variable "LinuxVirtualMachines" {
+    type = "map"
+}

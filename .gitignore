@@ -5,3 +5,4 @@ serviceprincipal.tf
 Terraform/*/Backend.tf
 terraform.customrole.json
 *.tfvars
+Terraform/Test/*

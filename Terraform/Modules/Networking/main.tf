@@ -31,7 +31,7 @@ resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
     description = "Enforces a required tag and its value on resource groups."
     display_name = "Require ${each.key} and its value on resource groups"
 
-    parameters = <<PARAMETERS
+    parameters =<<PARAMETERS
     {
         "tagName": {
             "value": "${each.key}"
@@ -60,7 +60,7 @@ resource "azurerm_policy_assignment" "AllowedResources" {
     description = "Defines what resource types can be created within the resource group: ${azurerm_resource_group.NetworkRG.name}"
     display_name = "Resource types allowed in ${azurerm_resource_group.NetworkRG.name}"
 
-    parameters = <<PARAMETERS
+    parameters =<<PARAMETERS
     {
         "listOfResourceTypesAllowed": {
             "value": [ "Microsoft.Network/networkWatchers","Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance" ]
@@ -86,7 +86,7 @@ resource "azurerm_policy_assignment" "AllowedLocations" {
     description = "Defines the location: ${var.NetworkRGLocation} resource can be deployed in."
     display_name = "Resources can be deployed in ${var.NetworkRGLocation}"
 
-    parameters = <<PARAMETERS
+    parameters =<<PARAMETERS
     {
         "listOfAllowedLocations": {
             "value": ["${var.NetworkRGLocation}"]
@@ -126,12 +126,12 @@ resource "azurerm_public_ip" "publicIPAddress" {
 /* Create a number of subnets as per the address prefix variable */
 resource "azurerm_subnet" "Subnet" {
     for_each = "${var.AddressPrefix}"
-    name =<<-EOT
-%{~ if "${each.key}" != "gateway" ~}
+    name =<<EOT
+%{~if "${each.key}" != "gateway"~}
 ${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-${upper(each.key)}
-%{~ else ~}
+%{~else~}
 GatewaySubnet
-%{~ endif ~}
+%{~endif~}
 EOT
     resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
     virtual_network_name = "${azurerm_virtual_network.VNet.name}"

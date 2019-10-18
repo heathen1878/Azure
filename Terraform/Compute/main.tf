@@ -21,6 +21,17 @@ module "CoreNetworking" {
     AddressPrefix = "${var.AddressPrefix}"
 }
 
-
-
+# Build virtual machines
+module "VirtualMachines" {
+    source = "../Modules/VirtualMachines"
+    environment = "${var.environment}"
+    CompanyNamePrefix = "${var.CompanyNamePrefix}"
+    NetworkRGLocation = "${var.NetworkRGLocation}"
+    VMRGLocation = "${var.VMRGLocation}"
+    VMRGTags = "${var.VMRGTags}"
+    VNetAddressSpace = "${var.VNetAddressSpace}"
+    WinVirtualMachines = "${var.WinVirtualMachines}"
+    LinuxVirtualMachines = "${var.LinuxVirtualMachines}"
+    Subnets = "${module.CoreNetworking.Subnets}"
+}
 

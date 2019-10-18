@@ -5,6 +5,12 @@ resource "azurerm_resource_group" "NetworkRG" {
     tags = "${var.NetworkRGTags}"
 }
 
+resource "azurerm_network_watcher" "NetworkWatcher" {
+    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-NW"
+    location = "${azurerm_resource_group.NetworkRG.location}"
+    resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
+}
+
 /* GOVERNANCE */
 /* 
 Policy for checking tagging compliance
@@ -57,7 +63,7 @@ resource "azurerm_policy_assignment" "AllowedResources" {
     parameters = <<PARAMETERS
     {
         "listOfResourceTypesAllowed": {
-            "value": [ "Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance" ]
+            "value": [ "Microsoft.Network/networkWatchers","Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance" ]
         }
     }
     PARAMETERS
@@ -96,19 +102,6 @@ resource "azurerm_policy_assignment" "AllowedLocations" {
 RBAC is applied at the subscription level. 
 */
 
-
-/* Management Locks */
-/*
-Should be the last configuration applied.
-*/
-resource "azurerm_management_lock" "read_only" {
-    name = "${azurerm_resource_group.NetworkRG.name}-readonly"
-    scope = "${azurerm_resource_group.NetworkRG.id}"
-    lock_level = "ReadOnly"
-    notes = "${azurerm_resource_group.NetworkRG.name} is read only"
-
-    depends_on = ["azurerm_virtual_network_gateway.VNetGateway"]
-}
 /*
 END OF GOVERNANCE
 */
@@ -135,7 +128,7 @@ resource "azurerm_subnet" "Subnet" {
     for_each = "${var.AddressPrefix}"
     name =<<-EOT
 %{~ if "${each.key}" != "gateway" ~}
-${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-${upper(each.key)}-${replace(upper(each.value),"/","-")}
+${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-${upper(each.key)}
 %{~ else ~}
 GatewaySubnet
 %{~ endif ~}
@@ -144,14 +137,6 @@ EOT
     virtual_network_name = "${azurerm_virtual_network.VNet.name}"
     address_prefix = "${each.value}"
 }
-
-/* Get the Gateway Subnet id */     
-data "azurerm_subnet" "gateway" {
-    name = "GatewaySubnet"
-    virtual_network_name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-VNET-${replace(upper(var.VNetAddressSpace[0]),"/","-")}"
-    resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
-    depends_on = ["azurerm_subnet.Subnet"]
-} 
 
 /* Create a VPN gateway and assign the public IP address and gateway subnet previously created */
 resource "azurerm_virtual_network_gateway" "VNetGateway" {
@@ -167,7 +152,11 @@ resource "azurerm_virtual_network_gateway" "VNetGateway" {
         name = "VNetGatewaySubnet"
         public_ip_address_id = "${azurerm_public_ip.publicIPAddress.id}"
         private_ip_address_allocation = "Dynamic"
-        subnet_id = "${data.azurerm_subnet.gateway.id}"
+        subnet_id = "${azurerm_subnet.Subnet["gateway"].id}"
     }
     depends_on = ["azurerm_subnet.Subnet"]
+}
+
+output "Subnets" {
+  value = azurerm_subnet.Subnet
 }

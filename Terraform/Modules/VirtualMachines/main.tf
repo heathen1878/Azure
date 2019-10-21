@@ -54,8 +54,22 @@ resource "azurerm_virtual_machine" "WindowsVM" {
     storage_os_disk {
         name = "${each.value.computerName}-${each.value.OSStorage.name}"
         create_option = "${each.value.OSStorage.createOption}"
-        caching = "${each.value.OSStorage.caching}"    
-        
+        caching = "${each.value.OSStorage.caching}"
+        os_type = "Windows"
+        managed_disk_type = "${each.value.OSStorage.diskType}"
+    }
+
+    dynamic "storage_data_disk" {
+        for_each = each.value.DataStorage
+        iterator = disk
+        content { 
+            name = "${each.value.computerName}-${disk.value.name}"
+            create_option = "empty"
+            caching = disk.value.caching
+            lun = disk.value.lun
+            managed_disk_type = disk.value.diskType
+            disk_size_gb = disk.value.diskSize
+        }
     }
 
     os_profile {
@@ -93,7 +107,21 @@ resource "azurerm_virtual_machine" "linuxVM" {
         name = "${each.value.computerName}-${each.value.OSStorage.name}"
         create_option = "${each.value.OSStorage.createOption}"
         caching = "${each.value.OSStorage.caching}"    
-        
+        os_type = "Linux"
+        managed_disk_type = "${each.value.OSStorage.diskType}"
+    }
+    
+    dynamic "storage_data_disk" {
+        for_each = each.value.DataStorage
+        iterator = disk
+        content { 
+            name = "${each.value.computerName}-${disk.value.name}"
+            create_option = "empty"
+            caching = disk.value.caching
+            lun = disk.value.lun
+            managed_disk_type = disk.value.diskType
+            disk_size_gb = disk.value.diskSize
+        }
     }
 
     os_profile {

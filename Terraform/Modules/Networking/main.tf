@@ -82,7 +82,6 @@ data "azurerm_policy_definition" "AllowedLocations" {
     depends_on = ["azurerm_resource_group.NetworkRG"]
 
 }
-
 resource "azurerm_policy_assignment" "AllowedLocations" {
     name = "Resources can be deployed in ${var.NetworkRGLocation}"
     scope = "${azurerm_resource_group.NetworkRG.id}"

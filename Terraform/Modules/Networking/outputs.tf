@@ -1,4 +1,4 @@
 
 output "Subnets" {
-  value = azurerm_subnet.Subnet
+  value = "${azurerm_subnet.Subnet}"
 }

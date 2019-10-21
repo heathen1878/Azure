@@ -34,4 +34,8 @@ module "VirtualMachines" {
     LinuxVirtualMachines = "${var.LinuxVirtualMachines}"
     Subnets = "${module.CoreNetworking.Subnets}"
 }
-
+module "NSG" {
+  source = "../Modules/NetworkSecurityGroup"
+  RGName = "${module.CoreNetworking.RGName}"
+  NSGs = "${var.NSGs}"  
+}

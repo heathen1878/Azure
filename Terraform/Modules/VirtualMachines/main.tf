@@ -60,15 +60,15 @@ resource "azurerm_virtual_machine" "WindowsVM" {
     }
 
     dynamic "storage_data_disk" {
-        for_each = each.value.DataStorage
-        iterator = disk
+        for_each = "${each.value.DataStorage}"
+        iterator = "disk"
         content { 
             name = "${each.value.computerName}-${disk.value.name}"
             create_option = "empty"
-            caching = disk.value.caching
-            lun = disk.value.lun
-            managed_disk_type = disk.value.diskType
-            disk_size_gb = disk.value.diskSize
+            caching = "${disk.value.caching}"
+            lun = "${disk.value.lun}"
+            managed_disk_type = "${disk.value.diskType}"
+            disk_size_gb = "${disk.value.diskSize}"
         }
     }
 
@@ -82,7 +82,7 @@ resource "azurerm_virtual_machine" "WindowsVM" {
 
     }
 
-    depends_on = [azurerm_network_interface.WinPrimary]
+    depends_on = ["azurerm_network_interface.WinPrimary"]
 }
 
 resource "azurerm_virtual_machine" "linuxVM" {
@@ -112,15 +112,15 @@ resource "azurerm_virtual_machine" "linuxVM" {
     }
     
     dynamic "storage_data_disk" {
-        for_each = each.value.DataStorage
-        iterator = disk
+        for_each = "${each.value.DataStorage}"
+        iterator = "disk"
         content { 
             name = "${each.value.computerName}-${disk.value.name}"
             create_option = "empty"
-            caching = disk.value.caching
-            lun = disk.value.lun
-            managed_disk_type = disk.value.diskType
-            disk_size_gb = disk.value.diskSize
+            caching = "${disk.value.caching}"
+            lun = "${disk.value.lun}"
+            managed_disk_type = "${disk.value.diskType}"
+            disk_size_gb = "${disk.value.diskSize}"
         }
     }
 
@@ -135,5 +135,5 @@ resource "azurerm_virtual_machine" "linuxVM" {
         disable_password_authentication = false
     }
 
-    depends_on = [azurerm_network_interface.LinuxPrimary]
+    depends_on = ["azurerm_network_interface.LinuxPrimary"]
 }

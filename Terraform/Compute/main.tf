@@ -35,7 +35,10 @@ module "VirtualMachines" {
     Subnets = "${module.CoreNetworking.Subnets}"
 }
 module "NSG" {
-  source = "../Modules/NetworkSecurityGroup"
-  RGName = "${module.CoreNetworking.RGName}"
-  NSGs = "${var.NSGs}"  
+    source = "../Modules/NetworkSecurityGroup"
+    RGName = "${module.CoreNetworking.RGName}"
+    environment = "${var.environment}"
+    CompanyNamePrefix = "${var.CompanyNamePrefix}"
+    NSGLocation = "${var.NSGLocation}"
+    NSGs = "${var.NSGs}"  
 }

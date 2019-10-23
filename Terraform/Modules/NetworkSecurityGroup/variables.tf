@@ -5,7 +5,7 @@ variable "environment" {
 variable "CompanyNamePrefix" {
     description = "Used to build the standard naming convention"
 }
-variable "VMRGLocation" {
+variable "NSGLocation" {
      description = "the Azure location for the resource group metadata"
 }
 variable "RGName" {

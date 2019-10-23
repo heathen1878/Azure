@@ -60,8 +60,8 @@ resource "azurerm_virtual_machine" "WindowsVM" {
     }
 
     dynamic "storage_data_disk" {
-        for_each = "${each.value.DataStorage}"
-        iterator = "disk"
+        for_each = each.value.DataStorage
+        iterator = disk
         content { 
             name = "${each.value.computerName}-${disk.value.name}"
             create_option = "empty"
@@ -112,8 +112,8 @@ resource "azurerm_virtual_machine" "linuxVM" {
     }
     
     dynamic "storage_data_disk" {
-        for_each = "${each.value.DataStorage}"
-        iterator = "disk"
+        for_each = each.value.DataStorage
+        iterator = disk
         content { 
             name = "${each.value.computerName}-${disk.value.name}"
             create_option = "empty"

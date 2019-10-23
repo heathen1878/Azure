@@ -26,6 +26,7 @@ variable "WinVirtualMachines" {
 variable "LinuxVirtualMachines" {
     type = "map"
 }
+variable "NSGLocation" {}
 variable "NSGs" {
     type = "map"
 }

@@ -18,6 +18,8 @@ variable "NetworkRGTags" {}
 variable "VNetAddressSpace" {}
 variable "VNetDNSServers" {}
 variable "AddressPrefix" {}
+variable "vpnClient" {}
+
 variable "VMRGLocation" {}
 variable "VMRGTags" {}
 variable "WinVirtualMachines" {
@@ -29,4 +31,11 @@ variable "LinuxVirtualMachines" {
 variable "NSGLocation" {}
 variable "NSGs" {
     type = "map"
+}
+variable "WVDRGLocation" {
+     description = "the Azure location for the resource group metadata"
+}
+variable "WVDRGTags" {
+    type = "map"
+    description = "list of tags for the Network Resource Group"
 }

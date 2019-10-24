@@ -19,6 +19,7 @@ module "CoreNetworking" {
     VNetAddressSpace = "${var.VNetAddressSpace}"
     VNetDNSServers = "${var.VNetDNSServers}"
     AddressPrefix = "${var.AddressPrefix}"
+    vpnClient = "${var.vpnClient}"
 }
 
 # Build virtual machines

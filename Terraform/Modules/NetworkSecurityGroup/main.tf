@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "NSG" {
     for_each = "${var.NSGs}"
-    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NSGLocation)}-${upper(var.environment)}-${upper(each.value.vnet)}-${upper(each.value.subnet)}-NSG"
+    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NSGLocation)}-${upper(var.environment)}-${upper(each.value.vnet)}-${replace(upper(each.value.subnet),"/","-")}-NSG"
     location = "${var.NSGLocation}"
     resource_group_name = "${var.RGName.name}"
 

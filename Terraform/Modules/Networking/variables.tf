@@ -14,17 +14,15 @@ variable "NetworkRGTags" {
 variable "VNetAddressSpace" {
     type = "list"
 }
-
+variable "vpnClient" {
+  
+}
 variable "VNetDNSServers" {
     type = "list"
 }
-
 variable "AddressPrefix" {
     type = "map"
     default = {
         subnet1 = "0.0.0.0/0"
     }
 }
-
-
-

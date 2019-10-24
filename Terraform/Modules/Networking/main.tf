@@ -159,7 +159,7 @@ resource "azurerm_virtual_network_gateway" "VNetGateway" {
     }
 
     vpn_client_configuration {
-        address_space = [ "${azurerm_subnet.Subnet["vpnClient"].address_prefix}" ]
+        address_space = [ "${var.vpnClient}" ]
         
     }
     

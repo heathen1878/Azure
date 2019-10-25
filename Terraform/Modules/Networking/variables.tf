@@ -15,7 +15,6 @@ variable "VNetAddressSpace" {
     type = "list"
 }
 variable "vpnClient" {
-  
 }
 variable "VNetDNSServers" {
     type = "list"
@@ -25,4 +24,8 @@ variable "AddressPrefix" {
     default = {
         subnet1 = "0.0.0.0/0"
     }
+}
+variable "publicCertData" {
+}
+variable "publicCertName" {  
 }

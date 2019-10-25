@@ -20,6 +20,8 @@ module "CoreNetworking" {
     VNetDNSServers = "${var.VNetDNSServers}"
     AddressPrefix = "${var.AddressPrefix}"
     vpnClient = "${var.vpnClient}"
+    publicCertName = "${var.publicCertName}"
+    publicCertData = "${var.publicCertData}"
 }
 
 # Build virtual machines
@@ -42,4 +44,12 @@ module "NSG" {
     CompanyNamePrefix = "${var.CompanyNamePrefix}"
     NSGLocation = "${var.NSGLocation}"
     NSGs = "${var.NSGs}"  
+}
+
+module "WVD" {
+    source = "../Modules/WVD"
+    environment = "${var.environment}"
+    CompanyNamePrefix = "${var.CompanyNamePrefix}"
+    WVDRGLocation = "${var.WVDRGLocation}"
+    WVDRGTags = "${var.WVDRGTags}"
 }

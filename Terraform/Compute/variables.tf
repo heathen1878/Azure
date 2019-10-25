@@ -39,3 +39,7 @@ variable "WVDRGTags" {
     type = "map"
     description = "list of tags for the Network Resource Group"
 }
+variable "publicCertData" {
+}
+variable "publicCertName" { 
+}

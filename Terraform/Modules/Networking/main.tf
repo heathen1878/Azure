@@ -160,7 +160,11 @@ resource "azurerm_virtual_network_gateway" "VNetGateway" {
 
     vpn_client_configuration {
         address_space = [ "${var.vpnClient}" ]
-        
+        vpn_client_protocols = ["SSTP"]
+        root_certificate {
+            name = "${var.publicCertName}"
+            public_cert_data = "${var.publicCertData}"
+        }
     }
     
     depends_on = ["azurerm_subnet.Subnet"]

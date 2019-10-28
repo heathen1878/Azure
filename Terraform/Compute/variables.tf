@@ -37,3 +37,7 @@ variable "publicCertData" {
 }
 variable "publicCertName" { 
 }
+variable "azureADUserPrincipalName" {
+}
+variable "azureLoginPassword" {
+}

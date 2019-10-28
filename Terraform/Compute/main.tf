@@ -45,11 +45,12 @@ module "NSG" {
     NSGLocation = "${var.Location}"
     NSGs = "${var.NSGs}"  
 }
-
 module "WVD" {
     source = "../Modules/WVD"
     environment = "${var.environment}"
     CompanyNamePrefix = "${var.CompanyNamePrefix}"
     WVDRGLocation = "${var.Location}"
     WVDRGTags = "${var.WVDRGTags}"
+    azureADUserPrincipalName = "${var.azureADUserPrincipalName}"
+    azureLoginPassword = "${var.azureLoginPassword}"
 }

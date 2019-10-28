@@ -14,7 +14,7 @@ module "CoreNetworking" {
     source = "../Modules/Networking"
     environment = "${var.environment}"
     CompanyNamePrefix = "${var.CompanyNamePrefix}"
-    NetworkRGLocation = "${var.NetworkRGLocation}"
+    NetworkRGLocation = "${var.Location}"
     NetworkRGTags = "${var.NetworkRGTags}"
     VNetAddressSpace = "${var.VNetAddressSpace}"
     VNetDNSServers = "${var.VNetDNSServers}"
@@ -29,8 +29,8 @@ module "VirtualMachines" {
     source = "../Modules/VirtualMachines"
     environment = "${var.environment}"
     CompanyNamePrefix = "${var.CompanyNamePrefix}"
-    NetworkRGLocation = "${var.NetworkRGLocation}"
-    VMRGLocation = "${var.VMRGLocation}"
+    NetworkRGLocation = "${var.Location}"
+    VMRGLocation = "${var.Location}"
     VMRGTags = "${var.VMRGTags}"
     VNetAddressSpace = "${var.VNetAddressSpace}"
     WinVirtualMachines = "${var.WinVirtualMachines}"
@@ -42,7 +42,7 @@ module "NSG" {
     RGName = "${module.CoreNetworking.RGName}"
     environment = "${var.environment}"
     CompanyNamePrefix = "${var.CompanyNamePrefix}"
-    NSGLocation = "${var.NSGLocation}"
+    NSGLocation = "${var.Location}"
     NSGs = "${var.NSGs}"  
 }
 
@@ -50,6 +50,6 @@ module "WVD" {
     source = "../Modules/WVD"
     environment = "${var.environment}"
     CompanyNamePrefix = "${var.CompanyNamePrefix}"
-    WVDRGLocation = "${var.WVDRGLocation}"
+    WVDRGLocation = "${var.Location}"
     WVDRGTags = "${var.WVDRGTags}"
 }

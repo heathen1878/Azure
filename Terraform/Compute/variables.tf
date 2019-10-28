@@ -13,14 +13,12 @@ variable "tenant_id" {
 }
 variable "environment" {}
 variable "CompanyNamePrefix" {}
-variable "NetworkRGLocation" {}
+variable "Location" {}
 variable "NetworkRGTags" {}
 variable "VNetAddressSpace" {}
 variable "VNetDNSServers" {}
 variable "AddressPrefix" {}
 variable "vpnClient" {}
-
-variable "VMRGLocation" {}
 variable "VMRGTags" {}
 variable "WinVirtualMachines" {
     type = "map"
@@ -28,12 +26,8 @@ variable "WinVirtualMachines" {
 variable "LinuxVirtualMachines" {
     type = "map"
 }
-variable "NSGLocation" {}
 variable "NSGs" {
     type = "map"
-}
-variable "WVDRGLocation" {
-     description = "the Azure location for the resource group metadata"
 }
 variable "WVDRGTags" {
     type = "map"

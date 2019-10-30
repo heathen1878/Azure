@@ -1,3 +1,85 @@
+######################################################################################################################
+# GOVERNANCE
+######################################################################################################################
+/* 
+Policy for checking tagging compliance
+*/
+data "azurerm_policy_definition" "RequireTagsOnRG" {
+    display_name = "Require tag and its value on resource groups"
+    depends_on = ["azurerm_resource_group.WVDRG"]
+}
+
+/* 
+Policy assignment for checking tagging compliance
+*/
+resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
+    for_each = "${var.WVDRGTags}"
+    name = "Require ${each.key} and its value on resource groups"
+    scope = "${azurerm_resource_group.WVDRG.id}"
+    policy_definition_id = "${data.azurerm_policy_definition.RequireTagsOnRG.id}"
+    description = "Enforces a required tag and its value on resource groups."
+    display_name = "Require ${each.key} and its value on resource groups"
+
+    parameters =<<PARAMETERS
+{
+"tagName": {
+    "value": "${each.key}"
+},
+"tagValue": {
+    "value": "${each.value}"
+}    
+}
+PARAMETERS
+
+    depends_on = ["azurerm_resource_group.WVDRG"]
+}
+
+/*
+Policy assignment for defining allowed resources
+*/
+data "azurerm_policy_definition" "AllowedResourceTypes" {
+    display_name = "Allowed resource types"
+    depends_on = ["azurerm_resource_group.WVDRG"]
+}
+
+/*
+Policy assignment for defining allowed locations
+*/
+data "azurerm_policy_definition" "AllowedLocations" {
+    
+    display_name = "Allowed locations"
+    
+    depends_on = ["azurerm_resource_group.WVDRG"]
+
+}
+resource "azurerm_policy_assignment" "AllowedLocations" {
+    name = "Resources can be deployed in ${var.WVDRGLocation}"
+    scope = "${azurerm_resource_group.WVDRG.id}"
+    policy_definition_id = "${data.azurerm_policy_definition.AllowedLocations.id}"
+    description = "Defines the location: ${var.WVDRGLocation} resource can be deployed in."
+    display_name = "Resources can be deployed in ${var.WVDRGLocation}"
+
+    parameters =<<PARAMETERS
+{
+"listOfAllowedLocations": {
+    "value": ["${var.WVDRGLocation}"]
+}
+}
+PARAMETERS
+
+    depends_on = ["azurerm_resource_group.WVDRG"]
+}
+######################################################################################################################
+# RBAC - RBAC is applied at the subscription level. 
+######################################################################################################################
+######################################################################################################################
+# END OF GOVERNANCE
+######################################################################################################################
+
+
+######################################################################################################################
+# RESOURCES
+######################################################################################################################
 resource "azurerm_resource_group" "WVDRG" {
     name = "${upper(var.CompanyNamePrefix)}-${upper(var.WVDRGLocation)}-${upper(var.environment)}-WVD-RG"
     location = "${var.WVDRGLocation}"
@@ -270,3 +352,6 @@ resource "azurerm_template_deployment" "WVD" {
     deployment_mode = "Incremental"
 
 }
+######################################################################################################################
+# END OF RESOURCES
+######################################################################################################################

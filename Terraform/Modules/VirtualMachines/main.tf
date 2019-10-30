@@ -1,4 +1,85 @@
-/* Resource Group for virtual machines */
+######################################################################################################################
+# GOVERNANCE
+######################################################################################################################
+/* 
+Policy for checking tagging compliance
+*/
+data "azurerm_policy_definition" "RequireTagsOnRG" {
+    display_name = "Require tag and its value on resource groups"
+    depends_on = ["azurerm_resource_group.VMRG"]
+}
+/* 
+Policy assignment for checking tagging compliance
+*/
+resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
+    for_each = "${var.VMRGTags}"
+    name = "Require ${each.key} and its value on resource groups"
+    scope = "${azurerm_resource_group.VMRG.id}"
+    policy_definition_id = "${data.azurerm_policy_definition.RequireTagsOnRG.id}"
+    description = "Enforces a required tag and its value on resource groups."
+    display_name = "Require ${each.key} and its value on resource groups"
+
+    parameters =<<PARAMETERS
+{
+"tagName": {
+    "value": "${each.key}"
+},
+"tagValue": {
+    "value": "${each.value}"
+}    
+}
+PARAMETERS
+
+    depends_on = ["azurerm_resource_group.VMRG"]
+}
+/*
+Policy assignment for defining allowed resources
+*/
+data "azurerm_policy_definition" "AllowedResourceTypes" {
+    display_name = "Allowed resource types"
+    depends_on = ["azurerm_resource_group.VMRG"]
+}
+/*
+Policy assignment for defining allowed locations
+*/
+data "azurerm_policy_definition" "AllowedLocations" {
+    
+    display_name = "Allowed locations"
+    
+    depends_on = ["azurerm_resource_group.VMRG"]
+
+}
+resource "azurerm_policy_assignment" "AllowedLocations" {
+    name = "Resources can be deployed in ${var.VMRGLocation}"
+    scope = "${azurerm_resource_group.VMRG.id}"
+    policy_definition_id = "${data.azurerm_policy_definition.AllowedLocations.id}"
+    description = "Defines the location: ${var.VMRGLocation} resource can be deployed in."
+    display_name = "Resources can be deployed in ${var.VMRGLocation}"
+
+    parameters =<<PARAMETERS
+{
+"listOfAllowedLocations": {
+    "value": ["${var.VMRGLocation}"]
+}
+}
+PARAMETERS
+
+    depends_on = ["azurerm_resource_group.VMRG"]
+}
+######################################################################################################################
+# RBAC - RBAC is applied at the subscription level. 
+######################################################################################################################
+######################################################################################################################
+# END OF GOVERNANCE
+######################################################################################################################
+
+
+######################################################################################################################
+# RESOURCES
+######################################################################################################################
+/* 
+Resource Group for virtual machines
+*/
 resource "azurerm_resource_group" "VMRG" {
     name = "${upper(var.CompanyNamePrefix)}-${upper(var.VMRGLocation)}-${upper(var.environment)}-VM-RG"
     location = "${var.VMRGLocation}"
@@ -79,7 +160,7 @@ resource "azurerm_virtual_machine" "WindowsVM" {
     }
 
     os_profile_windows_config {
-
+        provision_vm_agent = true
     }
 
     depends_on = ["azurerm_network_interface.WinPrimary"]
@@ -137,3 +218,9 @@ resource "azurerm_virtual_machine" "linuxVM" {
 
     depends_on = ["azurerm_network_interface.LinuxPrimary"]
 }
+
+
+
+######################################################################################################################
+# END OF RESOURCES
+######################################################################################################################

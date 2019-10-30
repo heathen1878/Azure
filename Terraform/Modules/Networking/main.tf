@@ -1,17 +1,6 @@
-/* Resource Group for networking */
-resource "azurerm_resource_group" "NetworkRG" {
-    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-NETWORK-RG"
-    location = "${var.NetworkRGLocation}"
-    tags = "${var.NetworkRGTags}"
-}
-
-resource "azurerm_network_watcher" "NetworkWatcher" {
-    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-NW"
-    location = "${azurerm_resource_group.NetworkRG.location}"
-    resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
-}
-
-/* GOVERNANCE */
+######################################################################################################################
+# GOVERNANCE
+######################################################################################################################
 /* 
 Policy for checking tagging compliance
 */
@@ -63,7 +52,7 @@ resource "azurerm_policy_assignment" "AllowedResources" {
     parameters =<<PARAMETERS
 {
 "listOfResourceTypesAllowed": {
-    "value": ["Microsoft.Network/networkWatchers","Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance"]
+    "value": ["Microsoft.Network/networkWatchers","Microsoft.Network/networkWatchers/*","Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance"]
 }
 }
 PARAMETERS
@@ -100,15 +89,32 @@ PARAMETERS
     depends_on = ["azurerm_resource_group.NetworkRG"]
 }
 
-/* RBAC */
-/*
-RBAC is applied at the subscription level. 
-*/
+######################################################################################################################
+# RBAC - RBAC is applied at the subscription level. 
+######################################################################################################################
 
-/*
-END OF GOVERNANCE
-*/
-/* RESOURCES */
+######################################################################################################################
+# END OF GOVERNANCE
+######################################################################################################################
+
+
+######################################################################################################################
+# RESOURCES
+######################################################################################################################
+/* Resource Group for networking */
+resource "azurerm_resource_group" "NetworkRG" {
+    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-NETWORK-RG"
+    location = "${var.NetworkRGLocation}"
+    tags = "${var.NetworkRGTags}"
+}
+
+/* Network watcher resource for VM network troubleshooting */
+resource "azurerm_network_watcher" "NetworkWatcher" {
+    name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-NW"
+    location = "${azurerm_resource_group.NetworkRG.location}"
+    resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
+}
+
 /* Create a virtual network */
 resource "azurerm_virtual_network" "VNet" {
     name = "${upper(var.CompanyNamePrefix)}-${upper(var.NetworkRGLocation)}-${upper(var.environment)}-VNET-${replace(upper(var.VNetAddressSpace[0]),"/","-")}"
@@ -169,3 +175,6 @@ resource "azurerm_virtual_network_gateway" "VNetGateway" {
     
     depends_on = ["azurerm_subnet.Subnet"]
 }
+######################################################################################################################
+# END OF RESOURCES
+######################################################################################################################

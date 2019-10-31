@@ -1,0 +1,2 @@
+// Get the average counter value and group by instance name
+Perf | where  TimeGenerated > ago(1h) | where CounterName == "Current Disk Queue Length" | summarize avg(CounterValue) by InstanceName 

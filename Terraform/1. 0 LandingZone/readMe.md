@@ -18,4 +18,27 @@ A service principal should be created in Azure AD and Terraform State should be 
 
 [Service Principal setup](https://www.terraform.io/docs/providers/azurerm/auth/service_principal_client_secret.html)
 
+```terraform
+subscription_id = "subscription Id"
+client_id = "service principal username"
+client_secret = "service principal password"
+tenant_id = "Azure tenant Id"
+```
+
 [Terraform Remote State setup](https://www.terraform.io/docs/backends/types/azurerm.html)
+
+```terraform
+terraform {
+    backend "azurerm" {
+        storage_account_name = "storage account name"
+        container_name = "container name"
+        key = "define a file name for the Terraform State"
+        access_key = "container access key"
+    }
+}
+```
+
+> Example command to apply code:
+```terraform
+terraform apply -auto-approve -var-file ..\..\servicePrincipal.tf -var-file ..\..\Customer\customerVars.tf
+```

@@ -20,14 +20,7 @@ resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
     display_name = "Require ${each.key} and its value on resource groups"
 
     parameters =<<PARAMETERS
-{
-"tagName": {
-    "value": "${each.key}"
-},
-"tagValue": {
-    "value": "${each.value}"
-}    
-}
+{"tagName": {"value":"${each.key}"},"tagValue":{"value":"${each.value}"}}
 PARAMETERS
 
     depends_on = ["azurerm_resource_group.VMRG"]
@@ -57,11 +50,7 @@ resource "azurerm_policy_assignment" "AllowedLocations" {
     display_name = "Resources can be deployed in ${var.VMRGLocation}"
 
     parameters =<<PARAMETERS
-{
-"listOfAllowedLocations": {
-    "value": ["${var.VMRGLocation}"]
-}
-}
+{"listOfAllowedLocations":{"value":["${var.VMRGLocation}\n"]}}
 PARAMETERS
 
     depends_on = ["azurerm_resource_group.VMRG"]
@@ -218,7 +207,19 @@ resource "azurerm_virtual_machine" "linuxVM" {
 
     depends_on = ["azurerm_network_interface.LinuxPrimary"]
 }
-
+resource "azurerm_virtual_machine_extension" "extensions" {
+    for_each = {
+        for myExtensions in local.ext_temp : "${myExtensions.vm_name}.${myExtensions.extension}" => myExtensions
+    }
+    name                 = "${each.value.extension}"
+    location             = "${azurerm_resource_group.VMRG.location}"
+    resource_group_name  = "${azurerm_resource_group.VMRG.name}"
+    virtual_machine_name = "${each.value.vm_name}"
+    publisher            = "${(lookup(var.extensions, each.value.extension)).publisher}"
+    type                 = "${(lookup(var.extensions, each.value.extension)).type}"
+    type_handler_version = "${(lookup(var.extensions, each.value.extension)).type_handler_extension}"
+    depends_on = ["azurerm_virtual_machine.WindowsVM"]
+}
 
 
 ######################################################################################################################

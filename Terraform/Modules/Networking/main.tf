@@ -21,14 +21,7 @@ resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
     display_name = "Require ${each.key} and its value on resource groups"
 
     parameters =<<PARAMETERS
-{
-"tagName": {
-    "value": "${each.key}"
-},
-"tagValue": {
-    "value": "${each.value}"
-}    
-}
+{"tagName":{"value": "${each.key}"},"tagValue": {"value": "${each.value}"}}
 PARAMETERS
 
     depends_on = ["azurerm_resource_group.NetworkRG"]
@@ -50,11 +43,7 @@ resource "azurerm_policy_assignment" "AllowedResources" {
     display_name = "Resource types allowed in ${azurerm_resource_group.NetworkRG.name}"
 
     parameters =<<PARAMETERS
-{
-"listOfResourceTypesAllowed": {
-    "value": ["Microsoft.Network/networkWatchers","Microsoft.Network/networkWatchers/*","Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance"]
-}
-}
+{"listOfResourceTypesAllowed":{"value": ["Microsoft.Network/networkWatchers","Microsoft.Network/networkWatchers/*","Microsoft.Authorization/locks","Microsoft.Authorization/policyAssignments","Microsoft.Authorization/roleAssignments","Microsoft.Network/networkInterfaces","Microsoft.Network/networkSecurityGroups","Microsoft.Network/networkSecurityGroups/securityRules","Microsoft.Network/azureFirewalls","Microsoft.Network/loadBalancers","Microsoft.Network/vpnGateways","Microsoft.Network/virtualNetworks","Microsoft.Network/virtualNetworks/subnets","Microsoft.Network/publicIPAddresses","Microsoft.Network/virtualNetworkGateways","Microsoft.Resource/checkPolicyCompliance"]}}
 PARAMETERS
 
     depends_on = ["azurerm_resource_group.NetworkRG"]
@@ -79,14 +68,11 @@ resource "azurerm_policy_assignment" "AllowedLocations" {
     display_name = "Resources can be deployed in ${var.NetworkRGLocation}"
 
     parameters =<<PARAMETERS
-{
-"listOfAllowedLocations": {
-    "value": ["${var.NetworkRGLocation}"]
-}
-}
+{"listOfAllowedLocations":{"value": ["${var.NetworkRGLocation}"]}}
 PARAMETERS
 
     depends_on = ["azurerm_resource_group.NetworkRG"]
+
 }
 
 ######################################################################################################################

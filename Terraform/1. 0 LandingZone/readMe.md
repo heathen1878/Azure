@@ -3,6 +3,7 @@ The landing zone builds the following:
 
 * Network resource group
 * Virtual Network
+* DNS Servers
 * Subnets as defined within the AddressPrefix variable *
 * VPN Gateway
 * Policies

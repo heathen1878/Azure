@@ -1,31 +1,29 @@
 variable "environment" {
     description = "The environment for the resource group e.g. Production, Development, Training...."
 }
-variable "CompanyNamePrefix" {
+variable "companyNamePrefix" {
     description = "Used to build the standard naming convention"
 }
-variable "NetworkRGLocation" {
+variable "networkRGLocation" {
      description = "the Azure location for the resource group metadata"
 }
-variable "NetworkRGTags" {
+variable "networkRGTags" {
     type = "map"
     description = "list of tags for the Network Resource Group"
 }
-variable "VNetAddressSpace" {
+variable "vNetAddressSpace" {
     type = "list"
 }
 variable "vpnClient" {
 }
-variable "VNetDNSServers" {
+variable "vNetDNSServers" {
     type = "list"
 }
-variable "AddressPrefix" {
+variable "addressPrefix" {
     type = "map"
     default = {
         subnet1 = "0.0.0.0/0"
     }
 }
 variable "publicCertData" {
-}
-variable "publicCertName" {  
 }

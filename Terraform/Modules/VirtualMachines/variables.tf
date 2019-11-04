@@ -23,8 +23,12 @@ variable "LinuxVirtualMachines" {
     type = "map"
     description = "a nested map of VM instances and their configuration"
 }
-
 variable "Subnets" {
   
 }
+variable "extensions" {
+    type = "map"
+    description = "Used to centrally define extensions and their respective properties. To allow for variations on the same extensions for each VM"  
+}
+
 

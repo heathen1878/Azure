@@ -41,3 +41,28 @@ variable "azureADUserPrincipalName" {
 }
 variable "azureLoginPassword" {
 }
+variable "LARGTags" {
+    type = "map"
+    description = "list of tags for the Network Resource Group"
+}
+variable "extensions" {
+    type = "map"
+    description = "Used to centrally define extensions and their respective properties. To allow for variations on the same extensions for each VM"
+    default = {
+        DSC = {
+            type_handler_extension = "2.9.1.0"
+            type = "DSC"
+            publisher = "Microsoft.Powershell"
+        }
+        WinNetworkWatcher = {
+            type_handler_extension = "1.4.905.3"
+            type = "NetworkWatcherAgentWindows"
+            publisher = "Microsoft.Azure.NetworkWatcher"
+        }
+        LinuxNetworkWatcher = {
+            type_handler_extension = "1.4.905.3"
+            type = "NetworkWatcherAgentLinux"
+            publisher = "Microsoft.Azure.NetworkWatcher"
+        }
+    }
+}

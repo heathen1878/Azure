@@ -36,6 +36,7 @@ module "VirtualMachines" {
     WinVirtualMachines = "${var.WinVirtualMachines}"
     LinuxVirtualMachines = "${var.LinuxVirtualMachines}"
     Subnets = "${module.CoreNetworking.Subnets}"
+    extensions = "${var.extensions}"
 }
 module "NSG" {
     source = "../Modules/NetworkSecurityGroup"
@@ -53,4 +54,12 @@ module "WVD" {
     WVDRGTags = "${var.WVDRGTags}"
     azureADUserPrincipalName = "${var.azureADUserPrincipalName}"
     azureLoginPassword = "${var.azureLoginPassword}"
+}
+
+module "LogAnalytics" {
+    source = "../Modules/LogAnalytics"
+    environment = "${var.environment}"
+    CompanyNamePrefix = "${var.CompanyNamePrefix}"
+    LARGLocation = "${var.Location}"
+    LARGTags = "${var.LARGTags}"
 }

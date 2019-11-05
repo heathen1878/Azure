@@ -1,4 +1,4 @@
-# Landing Zone
+# Network Landing Zone
 The landing zone builds the following:
 
 * Network resource group

@@ -1,6 +1,6 @@
 # Azure
 
-[Azure Landing Zone using Terraform](/Terraform/1.0-Landing-Zone/readMe.md)
+[Azure Network Landing Zone using Terraform](/Terraform/1.0-Landing-Zone/readMe.md)
 
 [Learning Terraform with Azure](/Terraform/readme.md)
 

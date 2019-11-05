@@ -115,6 +115,7 @@ resource "azurerm_network_watcher" "NetworkWatcher" {
     name = "${upper(var.companyNamePrefix)}-${upper(var.networkRGLocation)}-${upper(var.environment)}-NW"
     location = "${azurerm_resource_group.NetworkRG.location}"
     resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
+    depends_on = ["azurerm_resource_group.NetworkRG"]
 }
 
 /* Create a virtual network */

@@ -8,7 +8,6 @@ provider "azurerm" {
     client_secret = "${var.client_secret}"
     tenant_id = "${var.tenant_id}"
 }
-
 module "CoreNetworking" {
     source = "../Modules/Networking"
     environment = "${var.environment}"

@@ -11,12 +11,11 @@ provider "azurerm" {
 module "CoreNetworking" {
     source = "../Modules/Networking"
     environment = "${var.environment}"
-    companyNamePrefix = "${var.CompanyNamePrefix}"
-    networkRGLocation = "${var.Location}"
-    networkRGTags = "${var.NetworkRGTags}"
-    vNetAddressSpace = "${var.VNetAddressSpace}"
-    vNetDNSServers = "${var.VNetDNSServers}"
-    addressPrefix = "${var.AddressPrefix}"
-    vpnClient = "${var.vpnClientAddressSpace}"
+    companyNamePrefix = "${var.companyNamePrefix}"
+    location = "${var.location}"
+    tags = "${var.networkTags}"
+    vNETs = "${var.vNETs}"
+    spokes = "${var.spokes}"
+    vpnClientAddressSpace = "${var.vpnClientAddressSpace}"
     publicCertData = "${var.publicCertData}"
 }

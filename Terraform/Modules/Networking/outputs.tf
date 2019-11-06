@@ -2,6 +2,10 @@
 output "RGName" {
   value = "${azurerm_resource_group.NetworkRG}"
 }
-output "Subnets" {
-  value = "${azurerm_subnet.subnets}"
+output "hub_subnets" {
+  value = "${azurerm_subnet.hub_subnets}"
 }
+output "spoke_subnets" {
+  value = "${azurerm_subnet.spoke_subnets}"
+}
+

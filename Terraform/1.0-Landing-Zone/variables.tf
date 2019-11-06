@@ -14,27 +14,26 @@ variable "tenant_id" {
 variable "environment" {
     description = "Production, Test, development, Training..."
 }
-variable "CompanyNamePrefix" {
+variable "companyNamePrefix" {
     description = "An ancronym of the company name"
 }
-variable "Location" {
+variable "location" {
     description = "Which Azure region should the deployment use"
 }
-variable "NetworkRGTags" {
+variable "vNETs" {
+    type = "map"
+    description = "Hub network"
+}
+variable "spokes" {
+    type = "map"
+    description = "Spoke networks"
+}
+variable "networkTags" {
     description = "Tags required for the networking resource group"
-}
-variable "VNetAddressSpace" {
-    description = "the address space used by the virtual network e.g. 10.0.0.0/16"
-}
-variable "VNetDNSServers" {
-    description = "The DNS servers for the virtual network e.g if an Active Directory forest is being deployed, define those IP addresses"
-}
-variable "AddressPrefix" {
-    description = "a map of subnets; there must be a subnet named gateway for the VPN Gateway"
-}
-variable "vpnClientAddressSpace" {
-    description = "The address space used for Point-to-Site VPN clients"
 }
 variable "publicCertData" {
     description = "The X509 representation of the Root Certificate"
+}
+variable "vpnClientAddressSpace" {
+    description = "The address space assigned to point-to-site clients"  
 }

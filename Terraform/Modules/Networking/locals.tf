@@ -9,3 +9,12 @@ locals {
         ] if value.subnets != ""
     ])
 }
+
+locals {
+    peering_temp = flatten([
+        for key, value in var.spokes: {
+            vNet = key
+        }
+    if value.Peer !=0
+    ])
+}

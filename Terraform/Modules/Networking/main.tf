@@ -128,6 +128,7 @@ resource "azurerm_virtual_network" "hub" {
     depends_on = ["azurerm_resource_group.NetworkRG"]
 }
 
+/* Create hub subnets */
 resource "azurerm_subnet" "hub_subnets" {
     for_each = "${var.vNETs.hub.subnets}"
     name = "${each.key}"
@@ -148,6 +149,7 @@ resource "azurerm_virtual_network" "spokes" {
     depends_on = ["azurerm_resource_group.NetworkRG"]
 }
 
+/* Create spoke subnets */
 resource "azurerm_subnet" "spoke_subnets" {
     for_each = {
         for mySubnet in local.subnet_temp: "${mySubnet.net}.${mySubnet.range}.${mySubnet.subnet}" => mySubnet
@@ -159,6 +161,18 @@ resource "azurerm_subnet" "spoke_subnets" {
     depends_on = ["azurerm_virtual_network.spokes"]
 }
 
+/* Create spoke to hub peering */
+resource "azurerm_virtual_network_peering" "vNETPeering" {
+    for_each = {
+        for vNet in local.peering_temp: "${vNet.vNet}" => vNet
+    }
+    name = "${each.value.vNet}-to-Hub"
+    resource_group_name = "${azurerm_resource_group.NetworkRG.name}"
+    virtual_network_name = "${upper(var.companyNamePrefix)}-${upper(var.location)}-${upper(var.environment)}-VNET-${upper(each.value.vNet)}"
+    remote_virtual_network_id = "${azurerm_virtual_network.hub.id}"
+    depends_on = ["azurerm_subnet.spoke_subnets"]
+}
+
 /* Create a public IP address for the VPN gateway  */
 resource "azurerm_public_ip" "publicIPAddress" {
     name = "${azurerm_virtual_network.hub.name}-PIP-1"
@@ -166,6 +180,7 @@ resource "azurerm_public_ip" "publicIPAddress" {
     location = "${azurerm_resource_group.NetworkRG.location}"
     allocation_method = "Dynamic"
 }
+
 /* Create a VPN gateway and assign the public IP address and gateway subnet previously created */
 resource "azurerm_virtual_network_gateway" "VNetGateway" {
     name = "${upper(var.companyNamePrefix)}-${upper(var.location)}-${upper(var.environment)}-GW"

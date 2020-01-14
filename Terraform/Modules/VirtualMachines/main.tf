@@ -12,7 +12,7 @@ data "azurerm_policy_definition" "RequireTagsOnRG" {
 Policy assignment for checking tagging compliance
 */
 resource "azurerm_policy_assignment" "MandatoryTagPolicy" {
-    for_each = "${var.VMRGTags}"
+    for_each = var.VMRGTags
     name = "Require ${each.key} and its value on resource groups"
     scope = "${azurerm_resource_group.VMRG.id}"
     policy_definition_id = "${data.azurerm_policy_definition.RequireTagsOnRG.id}"
@@ -75,6 +75,14 @@ resource "azurerm_resource_group" "VMRG" {
     tags = "${var.VMRGTags}"
 }
 
+/* Check whether an availability set is needed for Windows VMs */
+resource "azurerm_availability_set" "WinAS" {
+}
+
+/* Check whether an availability set is needed for Linux VMs */
+resource "azurerm_availability_set" "LinuxAS" {
+}
+
 resource "azurerm_network_interface" "WinPrimary" {
     for_each = "${var.WinVirtualMachines}"
     name = "${each.value.computerName}-NIC"
@@ -104,12 +112,12 @@ resource "azurerm_network_interface" "LinuxPrimary" {
 }
 
 resource "azurerm_virtual_machine" "WindowsVM" {
-    for_each = "${var.WinVirtualMachines}"
-    name = "${each.value.computerName}"
-    location = "${azurerm_resource_group.VMRG.location}"
-    resource_group_name = "${azurerm_resource_group.VMRG.name}"
-    network_interface_ids = ["${azurerm_network_interface.WinPrimary[each.key].id}"]
-    vm_size = "${each.value.vmsize}"
+    for_each = var.WinVirtualMachines
+    name = each.value.computerName
+    location = azurerm_resource_group.VMRG.location
+    resource_group_name = azurerm_resource_group.VMRG.name
+    network_interface_ids = [azurerm_network_interface.WinPrimary[each.key].id]
+    vm_size = each.value.vmsize
 
     delete_os_disk_on_termination = true
     delete_data_disks_on_termination = true

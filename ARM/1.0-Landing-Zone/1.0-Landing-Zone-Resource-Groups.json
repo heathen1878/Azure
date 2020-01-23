@@ -1,0 +1,31 @@
+{
+    "Company_Prefix": "",
+    "Location": "",
+    "Environment": "",
+    "ResourceGroups": [
+        {
+            "Name": "",
+            "applicationNameTag": "",
+            "costCenterTag": "",
+            "departmentTag": "",
+            "descriptionTag": "",
+            "technicalContactTag": ""
+        },
+        {
+            "Name": "",
+            "applicationNameTag": "",
+            "costCenterTag": "",
+            "departmentTag": "",
+            "descriptionTag": "",
+            "technicalContactTag": ""
+        },
+        {
+            "Name": "",
+            "applicationNameTag": "",
+            "costCenterTag": "",
+            "departmentTag": "",
+            "descriptionTag": "",
+            "technicalContactTag": ""
+        }
+    ]
+}

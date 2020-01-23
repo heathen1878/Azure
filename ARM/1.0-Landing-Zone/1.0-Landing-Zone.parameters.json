@@ -1,0 +1,96 @@
+{
+    "$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion":"1.0.0.0",
+    "parameters": {
+        "Company_Prefix": {
+            "value": "",
+            "metadata": {
+                "description": "A prefix for naming resources in Azure"
+            }
+        },
+        "Environment": {
+            "value": "",
+            "metadata": {
+                "description": "The environment label e.g. Test, Production, Training...."   
+            }
+        },
+        "HubvNet_AddressPrefix": {
+            "value": "",
+            "metadata": {
+                "description": "Address space in CIDR format"
+            }
+        },
+        "HubvNet_GatewaySubnet_Prefix":{
+            "value": "",
+            "metadata": {
+                "description": "A subnet within the Address space specified above"
+            }
+        },
+        "HubvNet_AzureLoadBalancer_Prefix":{
+            "value": "",
+            "metadata": {
+                "description": "A subnet within the Address space specified above"   
+            }
+        },
+        "HubvNet_AzureLoadBalancer_Name": {
+            "value": "",
+            "metadata": {
+                "description": "Network name label for the Load Balancer"
+            }
+        },
+        "HubvNet_AzureFirewallSubnet_Prefix":{
+            "value": "",
+            "metadata": {
+                "description": "A subnet within the Address space specified above"
+            }
+        },
+        "HubvNet_InfrastructureServices_Prefix":{
+            "value": "",
+            "metadata": {
+                "description": "A subnet within the Address space specified above"
+            }
+        },
+        "HubvNet_InfrastructureServices_Name":{
+            "value": "",
+            "metadata": {
+                "description": "Network name label for the L"
+            }
+        },
+        "SpokevNet_AddressPrefix":{
+            "value": "",
+            "metadata": {
+                "description": "Address space in CIDR format"
+            }
+        },
+        "SpokevNet_AzureLoadBalancer_Prefix":{
+            "value": "",
+            "metadata": {
+                "description": "A subnet within the Address space specified above"
+            }
+        },
+        "SpokevNet_AzureLoadBalancer_Name":{
+            "value": "",
+            "metadata": {
+                "description": "Network name label for the L"
+            }
+        },
+        "SpokevNet_Application1_Prefix":{
+            "value": "",
+            "metadata": {
+                "description": "A subnet within the Address space specified above"
+            }
+        },
+        "SpokevNet_Application1_Name": {
+            "value": "",
+            "metadata": {
+                "description": "Network name label for the L"
+            }
+        },
+        "dnsServers":{
+            "value": "",
+            "metadata": {
+                "description": "An array for DNS Servers"
+            }
+        }
+    }
+}

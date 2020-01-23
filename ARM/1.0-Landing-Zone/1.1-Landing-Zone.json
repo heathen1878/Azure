@@ -1,99 +1,302 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "vnetName": {
-        "type": "string",
-        "defaultValue": "VNet1",
-        "metadata": {
-          "description": "VNet name"
-        }
-      },
-      "vnetAddressPrefix": {
-        "type": "string",
-        "defaultValue": "10.0.0.0/16",
-        "metadata": {
-          "description": "Address prefix"
-        }
-      },
-      "subnet1Prefix": {
-        "type": "string",
-        "defaultValue": "10.0.0.0/24",
-        "metadata": {
-          "description": "Subnet 1 Prefix"
-        }
-      },
-      "subnet1Name": {
-        "type": "string",
-        "defaultValue": "Subnet1",
-        "metadata": {
-          "description": "Subnet 1 Name"
-        }
-      },
-      "subnet2Prefix": {
-        "type": "string",
-        "defaultValue": "10.0.1.0/24",
-        "metadata": {
-          "description": "Subnet 2 Prefix"
-        }
-      },
-      "subnet2Name": {
-        "type": "string",
-        "defaultValue": "Subnet2",
-        "metadata": {
-          "description": "Subnet 2 Name"
-        }
-      },
-      "location": {
-        "type": "string",
-        "defaultValue": "[resourceGroup().location]",
-        "metadata": {
-          "description": "Location for all resources."
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Company_Prefix":{
+      "type": "string",
+      "defaultValue": "XXX",
+      "metadata": {
+        "description": "Abbreviation of the company name"
+      }
+    },
+    "Environment" :{
+      "type": "string",
+      "defaultValue": "TEST",
+      "metadata": {
+        "description": "Dev, Test, Prod, Training...etc"
+      }
+    },
+    "HubvNet_AddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.0/24",
+      "metadata": {
+        "description": "Address prefix for HUB vNet"
+      }
+    },
+    "HubvNet_GatewaySubnet_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.0/29",
+      "metadata": {
+        "description": "GatewaySubnet"
+      }
+    },
+    "HubvNet_GatewaySubnet_Name": {
+      "type": "string",
+      "defaultValue": "GatewaySubnet",
+      "metadata": {
+        "description": "Gateway Subnet used for hooking in a S2S and P2S VPN into your vNet"
+      }
+    },
+    "HubvNet_AzureLoadBalancer_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.8/29",
+      "metadata": {
+        "description": "AzureLoadBalancer"
+      }
+    },
+    "HubvNet_AzureLoadBalancer_Name": {
+      "type": "string",
+      "defaultValue": "AzureLoadBalancer",
+      "metadata": {
+        "description": "AzureLoadBalancer Subnet used for hooking presenting load balancing within the Hub vNet"
+      }
+    },
+    "HubvNet_AzureFirewallSubnet_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.16/29",
+      "metadata": {
+        "description": "AzureFirewallSubnet"
+      }
+    },
+    "HubvNet_AzureFirewallSubnet_Name": {
+      "type": "string",
+      "defaultValue": "AzureFirewallSubnet",
+      "metadata": {
+        "description": "Azure Firewall Subnet used for protecting external services within the subscription."
+      }
+    },
+    "HubvNet_InfrastructureServices_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.128/25",
+      "metadata": {
+        "description": "Infrastructure Services"
+      }
+    },
+    "HubvNet_InfrastructureServices_Name": {
+      "type": "string",
+      "defaultValue": "InfrastructureServices",
+      "metadata": {
+        "description": "Infrastructure Services Subnet used for hosting shared services used within the subscription."
+      }
+    },
+    "SpokevNet_AddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.10.1.0/24",
+      "metadata": {
+        "description": "Address prefix for SPOKE vNet"
+      }
+    },
+    "SpokevNet_AzureLoadBalancer_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.1.8/29",
+      "metadata": {
+        "description": "AzureLoadBalancer"
+      }
+    },
+    "SpokevNet_AzureLoadBalancer_Name": {
+      "type": "string",
+      "defaultValue": "AzureLoadBalancer",
+      "metadata": {
+        "description": "AzureLoadBalancer Subnet used for hooking presenting load balancing within the Spoke vNet"
+      }
+    },
+    "SpokevNet_Application1_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.1.128/25",
+      "metadata": {
+        "description": "Application"
+      }
+    },
+    "SpokevNet_Application1_Name": {
+      "type": "string",
+      "defaultValue": "Application",
+      "metadata": {
+        "description": "Application Subnet used for hosting an application within the spoke vNet"
+      }
+    },
+    "dnsServers": {
+      "type": "array",
+      "defaultValue": [
+        "10.10.0.129",
+        "10.10.0.130"
+      ],
+      "metadata": {
+        "description": "DNS Server used within the vNets; typically these are the domain controllers."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "variables": {
+    "Network_Watcher": "[concat(toUpper(parameters('Company_Prefix')),toUpper(resourceGroup().location),toUpper(parameters('Environment')),'-NW')]",
+    "HubvNet_Name": "[concat(toUpper(parameters('Company_Prefix')),toUpper(resourceGroup().location),toUpper(parameters('Environment')),'-HUB-VNET')]",
+    "HubvNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('HubvNet_Name'))]",
+    "SpokevNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('SpokevNet_Name'))]",
+    "SpokevNet_Name": "[concat(toUpper(parameters('Company_Prefix')),toUpper(resourceGroup().location),toUpper(parameters('Environment')),'-SPOKE-VNET')]",
+    "HubvNet_Peering_Name": "[concat(toUpper(variables('HubvNet_Name')),'-TO-',toUpper(variables('SpokevNet_Name')))]",
+    "SpokevNet_Peering_Name": "[concat(toUpper(variables('SpokevNet_Name')),'-TO-',toUpper(variables('HubvNet_Name')))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/networkWatchers",
+      "name": "[variables('Network_Watcher')]",
+      "location": "[parameters('location')]",
+      "Properties": {
+
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('HubvNet_Name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('HubvNet_AddressPrefix')]"
+          ]
+        },
+        "dhcpOptions":{
+          "dnsServers": "[parameters('dnsServers')]"
+        },
+        "enableDdosProtection":false,
+        "enableVmProtection":false
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('HubvNet_GatewaySubnet_Name')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('HubvNet_GatewaySubnet_Prefix')]"
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('HubvNet_AzureLoadBalancer_Name')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('HubvNet_AzureLoadBalancer_Prefix')]"
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('HubvNet_AzureFirewallSubnet_Name')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('HubvNet_AzureFirewallSubnet_Prefix')]"
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('HubvNet_InfrastructureServices_Name')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('HubvNet_InfrastructureServices_Prefix')]"
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('SpokevNet_Name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('SpokevNet_AddressPrefix')]"
+          ]
+        },
+        "dhcpOptions":{
+          "dnsServers": "[parameters('dnsServers')]"
+        },
+        "enableDdosProtection":false,
+        "enableVmProtection":false
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('SpokevNet_AzureLoadBalancer_Name')]",
+      "dependsOn": [
+        "[variables('SpokevNetId')]"    
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('SpokevNet_AzureLoadBalancer_Prefix')]"
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('SpokevNet_Application1_Name')]",
+      "dependsOn": [
+        "[variables('SpokevNetId')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('SpokevNet_Application1_Prefix')]"
+      }
+    },
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "name": "[variables('HubvNet_Peering_Name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]",
+        "[variables('SpokevNetId')]"
+      ],
+      "properties": {
+        "allowVirtualNetworkAccess":true,
+        "allowForwardedTraffic":true,
+        "allowGatewayTransit":false,
+        "useRemoteGateways":false,
+        "remoteVirtualNetwork":{
+          "id":"[variables('SpokevNetId')]"
         }
       }
     },
-    "variables": {},
-    "resources": [
-      {
-        "apiVersion": "2018-10-01",
-        "type": "Microsoft.Network/virtualNetworks",
-        "name": "[parameters('vnetName')]",
-        "location": "[parameters('location')]",
-        "properties": {
-          "addressSpace": {
-            "addressPrefixes": [
-              "[parameters('vnetAddressPrefix')]"
-            ]
-          }
-        },
-        "resources": [
-          {
-            "apiVersion": "2018-10-01",
-            "type": "subnets",
-            "location": "[parameters('location')]",
-            "name": "[parameters('subnet1Name')]",
-            "dependsOn": [
-              "[parameters('vnetName')]"
-            ],
-            "properties": {
-              "addressPrefix": "[parameters('subnet1Prefix')]"
-            }
-          },
-          {
-            "apiVersion": "2018-10-01",
-            "type": "subnets",
-            "location": "[parameters('location')]",
-            "name": "[parameters('subnet2Name')]",
-            "dependsOn": [
-              "[parameters('vnetName')]",
-              "[parameters('subnet1Name')]"
-            ],
-            "properties": {
-              "addressPrefix": "[parameters('subnet2Prefix')]"
-            }
-          }
-        ]
+    {
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "name": "[variables('SpokevNet_Peering_Name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]",
+        "[variables('SpokevNetId')]"
+      ],
+      "properties": {
+        "allowVirtualNetworkAccess":true,
+        "allowForwardedTraffic":true,
+        "allowGatewayTransit":false,
+        "useRemoteGateways":false,
+        "remoteVirtualNetwork":{
+          "id":"[variables('HubvNetId')]"
+        }
       }
-    ]
-  }
+    }
+  ]
+}
   

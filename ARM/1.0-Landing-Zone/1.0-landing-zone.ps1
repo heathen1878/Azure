@@ -48,3 +48,4 @@ Function New-ResourceGroup {
     # Create a resource group from the variables above.
     New-AzureRmResourceGroup -Name $resourceGroupName -Location $resourceGroupLocation -Tag $resourceGroupTags
 }
+

@@ -1,0 +1,115 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Company_Prefix":{
+            "type": "string",
+            "defaultValue": "XXX",
+            "metadata": {
+                "description": "Abbreviation of the company name"
+            }
+        },
+        "Environment" :{
+            "type": "string",
+            "defaultValue": "TEST",
+            "metadata": {
+                "description": "Dev, Test, Prod, Training...etc"
+            }
+        },
+        "Data_Retention": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "displayName": "Log retention in days",
+                "description": "Number of days data will be retained for"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        }
+    },
+    "variables": {
+        "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),toUpper(parameters('location')),toUpper(parameters('Environment')))]",
+        "Diagnostic_StorageAccount_Name": "[toLower(substring(replace(concat(variables('Deployment_Prefix'),'sharedsvcsdiag'), '-', ''),0,23))]",
+        "OMS_Workspace_Name": "[concat(variables('Deployment_Prefix'),'-SHAREDSVCS-LOG')]"
+    },
+    "resources": [
+        {
+            "comments": "----DIAGNOSTICS STORAGE ACCOUNT-----",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('Diagnostic_StorageAccount_Name')]",
+            "apiVersion": "2018-07-01",
+            "location": "[parameters('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "tags": {
+                "displayName": "Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    }
+                },
+                "supportsHttpsTrafficOnly": true
+            }
+        },
+        {
+            "comments": "Resource lock on diagnostic storage account",
+            "type": "Microsoft.Storage/storageAccounts/providers/locks",
+            "name": "[concat(variables('Diagnostic_StorageAccount_Name'), '/Microsoft.Authorization/storageDoNotDelete')]",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('Diagnostic_StorageAccount_Name'))]"
+            ],
+            "properties": {
+                "level": "CannotDelete"
+            }
+        },
+        {
+            "comments": "Log Analytics Workspace",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[variables('OMS_Workspace_Name')]",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "Log Analytics"
+            },
+            "properties": {
+                "sku": {
+                    "Name": "pergb2018"
+                },
+                "retention": "[parameters('Data_Retention')]"
+            }
+        },
+        {
+            "comments": "Resource lock on Log Analytics",
+            "type": "Microsoft.OperationalInsights/workspaces/providers/locks",
+            "name": "[concat(variables('OMS_Workspace_Name'), '/Microsoft.Authorization/logAnalyticsDoNotDelete')]",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[variables('OMS_Workspace_Name')]"
+            ],
+            "properties": {
+                "level": "CannotDelete"
+            }
+        }
+    ],
+    "outputs": {
+
+    }
+}

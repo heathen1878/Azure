@@ -16,6 +16,28 @@
         "description": "Dev, Test, Prod, Training...etc"
       }
     },
+    "Deploy_VPN_Gateway":{
+      "type":"string",
+      "defaultValue":"No",
+      "allowedValues":[
+        "Yes",
+        "No"
+      ],
+      "metadata":{
+        "description":"Whether or not to deploy a VPN Gateway in the Hub vNET"
+      }
+    },
+    "Deploy_AADDS_Subnet":{
+      "type":"string",
+      "defaultValue":"No",
+      "allowedValues":[
+        "Yes",
+        "No"
+      ],
+      "metadata":{
+        "description":"Whether or not to deploy an instance of Azure Active Directory Domain Services in the Hub vNET"
+      }
+    },
     "HubvNet_AddressPrefix": {
       "type": "string",
       "defaultValue": "10.10.0.0/24",
@@ -63,6 +85,20 @@
       "defaultValue": "AzureFirewallSubnet",
       "metadata": {
         "description": "Azure Firewall Subnet used for protecting external services within the subscription."
+      }
+    },
+    "HubvNet_AADDS_Prefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.16/28",
+      "metadata": {
+        "description": "Azure Active Directory Domain Services"
+      }
+    },
+    "HubvNet_AADDS_Name": {
+      "type": "string",
+      "defaultValue": "AADDS",
+      "metadata": {
+        "description": "Azure Active Directory Domain Services Subnet used for hosting an instance of Azure ADDS."
       }
     },
     "HubvNet_InfrastructureServices_Prefix": {
@@ -117,8 +153,8 @@
     "dnsServers": {
       "type": "array",
       "defaultValue": [
-        "10.10.0.129",
-        "10.10.0.130"
+        "10.10.0.20",
+        "10.10.0.21"
       ],
       "metadata": {
         "description": "DNS Server used within the vNets; typically these are the domain controllers."
@@ -130,6 +166,19 @@
       "metadata": {
         "description": "Location for all resources."
       }
+    },
+    "gatewaySku":{
+      "type":"string",
+      "defaultValue":"Basic",
+      "allowedValues":[
+        "Basic",
+        "VpnGw1",
+        "VpnGw2",
+        "VpnGw3"
+      ],
+      "metadata":{
+        "description":"The SKU of the Gateway to be deployed; production deployments should use VPNGW#"
+      }
     }
   },
   "variables": {
@@ -140,7 +189,8 @@
     "SpokevNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('SpokevNet_Name'))]",
     "SpokevNet_Name": "[concat(variables('Deployment_Prefix'),'-SPOKE-VNET')]",
     "HubvNet_Peering_Name": "[concat(toUpper(variables('HubvNet_Name')),'-TO-',toUpper(variables('SpokevNet_Name')))]",
-    "SpokevNet_Peering_Name": "[concat(toUpper(variables('SpokevNet_Name')),'-TO-',toUpper(variables('HubvNet_Name')))]"
+    "SpokevNet_Peering_Name": "[concat(toUpper(variables('SpokevNet_Name')),'-TO-',toUpper(variables('HubvNet_Name')))]",
+    "Gateway_PIP_Name": "[concat(toUpper(variables('Deployment_Prefix')),'PIP-GW')]"
   },
   "resources": [
     {
@@ -216,6 +266,19 @@
       ],
       "properties": {
         "addressPrefix": "[parameters('HubvNet_InfrastructureServices_Prefix')]"
+      }
+    },
+    {
+      "condition":"[equals(parameters('Deploy_AADDS_Subnet'), 'Yes')]",
+      "apiVersion": "2019-09-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "location": "[parameters('location')]",
+      "name": "[parameters('HubvNet_AADDS_Name')]",
+      "dependsOn": [
+        "[variables('HubvNetId')]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('HubvNet_AADDS_Prefix')]"
       }
     },
     {
@@ -297,7 +360,54 @@
           "id":"[variables('HubvNetId')]"
         }
       }
+    },
+    {
+      "condition":"[equals(parameters('Deploy_VPN_Gateway'), 'Yes')]",
+      "apiVersion":"2018-02-01",
+      "type":"Microsoft.Network/publicIPAddresses",
+      "name":"[variables('Gateway_PIP_Name')]",
+      "location":"[parameters('location')]",
+      "properties":{
+        "publicIPAllocationMethod":"Dynamic"
+      }
+    },
+    {
+      "condition":"[equals(parameters('Deploy_VPN_Gateway'), 'Yes')]",
+      "apiVersion":"2019-11-01",
+      "type":"Microsoft.Network/virtualNetworkGateways",
+      "name":"[variables('Gateway_PIP_Name')]",
+      "location":"[parameters('location')]",
+      "dependsOn":[
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('Gateway_PIP_Name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'), parameters('HubvNet_GatewaySubnet_Name'))]"
+      ],
+      "properties":{
+        "ipConfigurations":[
+          {
+            "properties":{
+              "privateIPAllocationMethod":"Dynamic",
+              "subnet":{
+                "id":"[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('HubvNet_GatewaySubnet_Name'))]"
+              },
+              "publicIPAddress":{
+                "id":"[resourceId('Microsoft.Network/publicIPAddresses', variables('Gateway_PIP_Name'))]"
+              }
+            },
+            "name":"vnetGatewayConfig"
+          }
+        ],
+        "sku":{
+          "name":"[parameters('gatewaySku')]",
+          "tier":"[parameters('gatewaySku')]"
+        },
+        "gatewayType":"Vpn",
+        "vpnType":"RouteBased",
+        "enableBgp":false
+      }
     }
-  ]
+  ],
+  "outputs": {
+
+  }
 }
   

@@ -133,11 +133,12 @@
     }
   },
   "variables": {
-    "Network_Watcher": "[concat(toUpper(parameters('Company_Prefix')),toUpper(resourceGroup().location),toUpper(parameters('Environment')),'-NW')]",
-    "HubvNet_Name": "[concat(toUpper(parameters('Company_Prefix')),toUpper(resourceGroup().location),toUpper(parameters('Environment')),'-HUB-VNET')]",
+    "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),toUpper(parameters('location')),toUpper(parameters('Environment')))]",
+    "Network_Watcher": "[concat(variables('Deployment_Prefix'),'-NW')]",
+    "HubvNet_Name": "[concat(variables('Deployment_Prefix'),'-HUB-VNET')]",
     "HubvNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('HubvNet_Name'))]",
     "SpokevNetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('SpokevNet_Name'))]",
-    "SpokevNet_Name": "[concat(toUpper(parameters('Company_Prefix')),toUpper(resourceGroup().location),toUpper(parameters('Environment')),'-SPOKE-VNET')]",
+    "SpokevNet_Name": "[concat(variables('Deployment_Prefix'),'-SPOKE-VNET')]",
     "HubvNet_Peering_Name": "[concat(toUpper(variables('HubvNet_Name')),'-TO-',toUpper(variables('SpokevNet_Name')))]",
     "SpokevNet_Peering_Name": "[concat(toUpper(variables('SpokevNet_Name')),'-TO-',toUpper(variables('HubvNet_Name')))]"
   },

@@ -75,17 +75,20 @@ Function New-ResourceGroup {
     }
     
     # Create a resource group from the variables above, if it doesn't already exist.
-    If (!(Get-AzResourceGroup -Name $resourceGroupName)){
+    Try {
 
-        New-AzResourceGroup -Name $resourceGroupName -Location $resourceGroupLocation -Tag $resourceGroupTags
-
-    } Else {
-
+        Get-AzResourceGroup -Name $resourceGroupName -ErrorAction Stop | Out-Null
         Write-Warning "$resourceGroupName already exists"
 
     }
-}
+    Catch {
 
+        # Resource group doesn't exist, create it.
+        New-AzResourceGroup -Name $resourceGroupName -Location $resourceGroupLocation -Tag $resourceGroupTags
+
+    }
+
+}
 <#
 Import resource group configurations
 #>

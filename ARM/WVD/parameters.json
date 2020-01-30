@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rdshImageSource": {
+            "value": "Gallery"
+        },
+        "vmImageVhdUri": {
+            "value": ""
+        },
+        "rdshGalleryImageSKU": {
+            "value": "Windows-10-Enterprise-multi-session-with-Office-365-ProPlus"
+        },
+        "rdshCustomImageSourceName": {
+            "value": ""
+        },
+        "rdshCustomImageSourceResourceGroup": {
+            "value": ""
+        },
+        "rdshNamePrefix": {
+            "value": "ZENPOC"
+        },
+        "rdshNumberOfInstances": {
+            "value": 2
+        },
+        "rdshVMDiskType": {
+            "value": "Premium_LRS"
+        },
+        "rdshVmSize": {
+            "value": "Standard_F4s"
+        },
+        "enableAcceleratedNetworking": {
+            "value": false
+        },
+        "rdshUseManagedDisks": {
+            "value": true
+        },
+        "storageAccountResourceGroupName": {
+            "value": "''"
+        },
+        "domainToJoin": {
+            "value": "azurecloudlab.co.uk"
+        },
+        "existingDomainUPN": {
+            "value": "domadmin@azurecloudlab.co.uk"
+        },
+        "existingDomainPassword": {
+            "value": null
+        },
+        "ouPath": {
+            "value": "OU=Windows Virtual Desktop,OU=Infrastructure,OU=Azure Cloud Lab,DC=azurecloudlab,DC=co,DC=uk"
+        },
+        "existingVnetName": {
+            "value": "ZEN-NORTHEUROPE-POC-VNET-HUB"
+        },
+        "newOrExistingVnet": {
+            "value": "existing"
+        },
+        "existingSubnetName": {
+            "value": "WVD"
+        },
+        "virtualNetworkResourceGroupName": {
+            "value": "ZEN-NORTHEUROPE-POC-VNET-RG"
+        },
+        "rdBrokerURL": {
+            "value": "https://rdbroker.wvd.microsoft.com"
+        },
+        "existingTenantGroupName": {
+            "value": "Default Tenant Group"
+        },
+        "existingTenantName": {
+            "value": "Zen WVD PoC"
+        },
+        "hostPoolName": {
+            "value": "ZENWVDPOC"
+        },
+        "serviceMetadataLocation": {
+            "value": "United-States"
+        },
+        "enablePersistentDesktop": {
+            "value": false
+        },
+        "defaultDesktopUsers": {
+            "value": ""
+        },
+        "tenantAdminUpnOrApplicationId": {
+            "value": "10021b21-1869-43d7-88bd-6a010f9c8be2"
+        },
+        "tenantAdminPassword": {
+            "value": null
+        },
+        "isServicePrincipal": {
+            "value": true
+        },
+        "aadTenantId": {
+            "value": "4626bde4-1913-4ce8-99fd-b9108b274fec"
+        },
+        "location": {
+            "value": "northeurope"
+        }
+    }
+}

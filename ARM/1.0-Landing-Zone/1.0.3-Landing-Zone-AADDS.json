@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Deploy_AADDS":{
+            "type":"string",
+            "defaultValue":"No",
+            "allowedValues":[
+                "Yes",
+                "No"
+            ],
+            "metadata":{
+                "description":"Determine whether AADDS should be deployed"
+            }
+        },
+        "Company_Prefix":{
+            "type": "string",
+            "defaultValue": "XXX",
+            "metadata": {
+                "description": "Abbreviation of the company name"
+            }
+        },
+        "Environment" :{
+            "type": "string",
+            "defaultValue": "TEST",
+            "metadata": {
+                "description": "Dev, Test, Prod, Training...etc"
+            }
+        },
+        "Forest_Name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Forest Name"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "HubvNet_AADDS_Name": {
+            "type": "string",
+            "defaultValue": "AADDS",
+            "metadata": {
+                "description": "Azure Active Directory Domain Services Subnet used for hosting an instance of Azure ADDS."
+            }
+        },
+        "filteredSync": {
+            "type": "string",
+            "defaultvalue": "Disabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "metadata":{
+                "description": "Group-based filtered sync or sync-all."
+            }   
+        },
+        "domainConfigurationType": {
+            "type": "String"
+        },
+        "notificationSettings": {
+            "type": "Object",
+            "defaultValue":{
+                "notifyGlobalAdmins": "Enabled",
+                "notifyDcAdmins": "Enabled",
+                "additionalRecipients": [
+
+                ]
+            }
+        }
+    },
+    "variables": {
+        "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),'-',toUpper(parameters('location')),'-',toUpper(parameters('Environment')))]",
+        
+        "HubvNet_Id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'providers/Microsoft.Network/virtualNetworks/', variables('HubvNet_Name'))]",
+        "AADDS_Subnet_Id": "[resourceId(concat(variables('Deployment_Prefix'),'-NETWORK-RG'),'Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'), parameters('HubvNet_AADDS_Name'))]"
+    },
+    "resources": [
+        
+        {
+            "condition":"[equals(parameters('Deploy_AADDS'), 'Yes')]",
+            "type": "Microsoft.AAD/DomainServices",
+            "name": "[parameters('Forest_Name')]",
+            "apiVersion": "2017-06-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "domainName": "[parameters('Forest_Name')]",
+                "subnetId": "[variables('AADDS_Subnet_Id')]",
+                "filteredSync": "[parameters('filteredSync')]",
+                "notificationSettings": "[parameters('notificationSettings')]"
+            }
+        }
+    ],
+    "outputs": {
+
+    }
+}

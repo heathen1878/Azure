@@ -190,7 +190,9 @@
     "SpokevNet_Name": "[concat(variables('Deployment_Prefix'),'-SPOKE-VNET')]",
     "HubvNet_Peering_Name": "[concat(toUpper(variables('HubvNet_Name')),'-TO-',toUpper(variables('SpokevNet_Name')))]",
     "SpokevNet_Peering_Name": "[concat(toUpper(variables('SpokevNet_Name')),'-TO-',toUpper(variables('HubvNet_Name')))]",
-    "Gateway_PIP_Name": "[concat(toUpper(variables('Deployment_Prefix')),'PIP-GW')]"
+    "Gateway_PIP_Name": "[concat(toUpper(variables('Deployment_Prefix')),'PIP-GW')]",
+    "AADDS_NSG_Name": "[concat(toUpper(parameters('HubvNet_AADDS_Name')), '-NSG')]",
+    "NSG_Id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('AADDS_NSG_Name'))]"
   },
   "resources": [
     {
@@ -285,10 +287,64 @@
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'),parameters('HubvNet_GatewaySubnet_Name'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'),parameters('HubvNet_AzureLoadBalancer_Name'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'),parameters('HubvNet_AzureFirewallSubnet_Name'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'),parameters('HubvNet_InfrastructureServices_Name'))]"
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'),parameters('HubvNet_InfrastructureServices_Name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups',variables('AADDS_NSG_Name'))]"
       ],
       "properties": {
-        "addressPrefix": "[parameters('HubvNet_AADDS_Prefix')]"
+        "addressPrefix": "[parameters('HubvNet_AADDS_Prefix')]",
+        "networkSecurityGroup": {
+          "id": "[variables('NSG_Id')]"
+        }
+      }
+    },
+    {
+      "condition":"[equals(parameters('Deploy_AADDS_Subnet'), 'Yes')]",
+      "apiVersion": "2018-10-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('AADDS_NSG_Name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "AllowPSRemoting",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5986",
+              "sourceAddressPrefix": "AzureActiveDirectoryDomainServices",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 301,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "AllowRDP",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "CorpNetSaw",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 201,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "AllowSyncWithAzureAD",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "AzureActiveDirectoryDomainServices",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }  
+          }
+        ]
       }
     },
     {

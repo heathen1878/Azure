@@ -12,6 +12,10 @@
             4. Add a user to the group using the Add-AzureADGroupMember cmdlet.
             5. Runs the ARM template to deploy Azure Active Directory Domain Services
 
+    .PARAMETER FILE
+        This script requires a file name and path e.g. 
+        .\1.0.3-Landing-Zone-AADDS.ps1 -ParameterFile ..\..\CustomerData\1.0-Landing-Zone\1.0.3-Landing-Zone-AADDS.json
+
     .NOTES
         Version:        1.0.0.0
         Author:         Dom Clayton
@@ -19,7 +23,7 @@
 
     .EXAMPLE
         Set-ExecutionPolicy Bypass -Scope Process -Force;.\1.0.3-Landing-Zone-AADDS.ps1 `
-        -ParameterFile ..\..\CustomerData\1.0-Landing-Zone\1.0-Landing-Zone-AADDS.json
+        -ParameterFile ..\..\CustomerData\1.0-Landing-Zone\1.0.3-Landing-Zone-AADDS.json
       
 #>
 <#
@@ -139,13 +143,13 @@ $ResourceGroups = Get-Content -Path $config.Configuration -Raw | ConvertFrom-Jso
 <#
 Check the network and shared services resource group exists
 #>
-If (Get-AzResourceGroup -Name (-Join($ResourceGroups.Company_Prefix),"-",$ResourceGroups.Location,"-",$ResourceGroups.Environment,"-NETWORK-RG")){
+If (Get-AzResourceGroup -Name (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-NETWORK-RG"))){
 
     Write-Verbose "Ready to deploy" -Verbose
 
 }
 
-If (Get-AzResourceGroup -Name (-Join($ResourceGroups.Company_Prefix),"-",$ResourceGroups.Location,"-",$ResourceGroups.Environment,"-SHAREDSERVICES-RG")){
+If (Get-AzResourceGroup -Name (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-SHAREDSERVICES-RG"))){
 
     Write-Verbose "Ready to deploy" -Verbose
 
@@ -154,12 +158,9 @@ If (Get-AzResourceGroup -Name (-Join($ResourceGroups.Company_Prefix),"-",$Resour
 <#
 Deploy the Azure Resource Management Template.
 #>
-$Name = (-Join("1.0.3-Landing-Zone-AADDS-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-Date).Year,"-",(Get-Date).Hour,":",(Get-Date).Minute))
-New-AzResourceGroupDeployment -Name $Name -ResourceGroupName XXX-WESTEUROPE-PROD-SHAREDSERVICES-RG -TemplateFile .\1.0.3-Landing-Zone-AADDS.json  -Deploy_AADDS "Yes" -Forest_Name $ResourceGroups.Forest_Name
-
-
-
-
+$Name = (-Join("1.0.3-Landing-Zone-AADDS-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-Date).Year,"-",(Get-Date).Hour,(Get-Date).Minute))
+New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-SHAREDSERVICES-RG")) `
+-TemplateFile .\1.0.3-Landing-Zone-AADDS.json -Deploy_AADDS "Yes" -Forest_Name $ResourceGroups.Forest_Name -Company_Prefix $ResourceGroups.Company_Prefix -Environment $ResourceGroups.Environment
 
 <#
 Disconnect from Azure

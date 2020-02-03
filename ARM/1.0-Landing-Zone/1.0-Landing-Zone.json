@@ -119,7 +119,7 @@
       "type": "string",
       "defaultValue": "10.10.1.0/24",
       "metadata": {
-        "description": "Address prefix for SPOKE vNet"
+        "description": "Address prefix for the SPOKE vNet"
       }
     },
     "SpokevNet_AzureLoadBalancer_Prefix": {

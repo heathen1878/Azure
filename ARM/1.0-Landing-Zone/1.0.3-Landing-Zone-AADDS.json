@@ -60,7 +60,8 @@
             }   
         },
         "domainConfigurationType": {
-            "type": "String"
+            "type": "string",
+            "defaultValue": "FullySynced"
         },
         "notificationSettings": {
             "type": "Object",
@@ -68,31 +69,29 @@
                 "notifyGlobalAdmins": "Enabled",
                 "notifyDcAdmins": "Enabled",
                 "additionalRecipients": [
-
                 ]
             }
         }
     },
     "variables": {
         "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),'-',toUpper(parameters('location')),'-',toUpper(parameters('Environment')))]",
-        
-        "HubvNet_Id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'providers/Microsoft.Network/virtualNetworks/', variables('HubvNet_Name'))]",
-        "AADDS_Subnet_Id": "[resourceId(concat(variables('Deployment_Prefix'),'-NETWORK-RG'),'Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'), parameters('HubvNet_AADDS_Name'))]"
+        "HubvNet_RG": "[concat(variables('Deployment_Prefix'), '-NETWORK-RG')]",
+        "HubvNet_Name": "[concat(variables('Deployment_Prefix'), '-HUB-VNET')]",
+        "HubvNet_Subnet_Id": "[resourceId(variables('HubvNet_RG'), 'Microsoft.Network/virtualNetworks/subnets', variables('HubvNet_Name'), parameters('HubvNet_AADDS_Name'))]"
     },
     "resources": [
-        
         {
             "condition":"[equals(parameters('Deploy_AADDS'), 'Yes')]",
             "type": "Microsoft.AAD/DomainServices",
-            "name": "[parameters('Forest_Name')]",
             "apiVersion": "2017-06-01",
+            "name": "[parameters('Forest_Name')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-            ],
+            "dependsOn": [],
             "properties": {
                 "domainName": "[parameters('Forest_Name')]",
-                "subnetId": "[variables('AADDS_Subnet_Id')]",
+                "subnetId": "[variables('HubvNet_Subnet_Id')]",
                 "filteredSync": "[parameters('filteredSync')]",
+                "domainConfigurationType": "[parameters('domainConfigurationType')]",
                 "notificationSettings": "[parameters('notificationSettings')]"
             }
         }

@@ -23,27 +23,77 @@
                 "description": "Specifies the location in which the Azure Storage resources should be deployed."
             }
         },
-        "FileShares": {
+        "StandardStorageAccountKind": {
+            "type": "string",
+            "defaultValue": "StorageV2",
+            "metadata": {
+                "description": "The default storage account type for hosting standard file shares; This will be StorageV2 for the foreseeable future."
+            }
+        },
+        "PremiumStorageAccountKind": {
+            "type": "string",
+            "defaultValue": "FileStorage",
+            "metadata": {
+                "description": "The storage acccount type for premium files is FileStorage; this is used in tandem with Premuim_LRS storage sku"
+            }
+        },
+        "StandardStorageSku": {
+            "type": "string",
+            "defaultValue": "Standard_ZRS",
+            "metadata": {
+                "description": "Zone redundant replication is the minimum for standard storage replication"
+            }
+        },
+        "PremiumStorageSku": {
+            "type": "string",
+            "defaultValue": "Premium_LRS",
+            "metadata": {
+                "description": "Locally redundant replication is the only current option for premium storage"
+            }
+        },
+        "StandardFileShares": {
             "type": "array",
             "defaultValue": [
 
             ]
+        },
+        "PremiumFileShares": {
+            "type": "array",
+            "defaultValue": [
+                
+            ]
         }
     },
     "variables" : {
-        "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),'-',toUpper(parameters('location')),'-',toUpper(parameters('Environment')))]",
-        "generalStorageAccountName": "[concat(tolower(variables('Deployment_Prefix')),'general')]"
+        "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),toUpper(parameters('Environment')))]",
+        "generalStorageAccountName": "[concat(tolower(variables('Deployment_Prefix')),'general')]",
+        "profiledisksStorageAccountName": "[concat(tolower(variables('Deployment_Prefix')),'profiledisks')]"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2018-07-01",
+            "apiVersion": "2019-04-01",
             "name": "[variables('generalStorageAccountName')]",
             "location": "[parameters('location')]",
-            "kind": "FileStorage",
+            "kind": "[parameters('StandardStorageAccountKind')]",
             "sku": {
-                "name": "Standard_ZRS",
-                "tier": "Standard"
+                "name": "[parameters('StandardStorageSku')]"
+            },
+            "properties": {
+                "accessTier": "Hot",
+                "azureFilesIdentityBasedAuthentication": {
+                    "directoryServiceOptions": "AADDS"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[variables('profiledisksStorageAccountName')]",
+            "location": "[parameters('location')]",
+            "kind": "[parameters('PremiumStorageAccountKind')]",
+            "sku": {
+                "name": "[parameters('PremiumStorageSku')]"
             },
             "properties": {
                 "accessTier": "Hot",
@@ -55,14 +105,32 @@
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
             "apiVersion": "2019-06-01",
-            "name": "[concat(variables('generalStorageAccountName'), '/default/',parameters('FileShares')[copyIndex()])]",
+            "name": "[concat(variables('generalStorageAccountName'), '/default/',toLower(parameters('StandardFileShares')[copyIndex()]))]",
             "copy": {
-                "name": "fileShareCopy",
-                "count": "[length(parameters('FileShares'))]"
+                "name": "standardFileShareCopy",
+                "count": "[length(parameters('StandardFileShares'))]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('generalStorageAccountName'))]"
-            ]
+            ],
+            "properties": {
+                "shareQuota": 1
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileservices/shares",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(variables('profiledisksStorageAccountName'), '/default/', toLower(parameters('PremiumFileShares')[copyIndex()]))]",
+            "copy": {
+                "name": "premiumFileShareCopy",
+                "count": "[length(parameters('PremiumFileShares'))]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('profiledisksStorageAccountName'))]"
+            ],
+            "properties": {
+                "shareQuota": 100
+            }
         }
     ]
 }

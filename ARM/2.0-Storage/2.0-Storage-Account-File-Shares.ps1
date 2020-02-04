@@ -57,7 +57,7 @@ If (Get-AzResourceGroup -Name (-Join($ResourceGroups.Company_Prefix,"-",(-join($
 Deploy the Azure Resource Management Template.
 #>
 $Name = (-Join("2.0-Storage-Account-File-Shares-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-Date).Year,"-",(Get-Date).Hour,(Get-Date).Minute))
-New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-STORAGEs-RG")) `
+New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-STORAGE-RG")) `
 -TemplateFile .\2.0-Storage-Account-File-Shares.json -Company_Prefix $ResourceGroups.Company_Prefix -Environment $ResourceGroups.Environment `
 -TemplateParameterFile ..\..\CustomerData\2.0-Storage\2.0-Storage-Account-File-Shares.parameters.json
 

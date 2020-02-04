@@ -113,7 +113,13 @@ Function New-ResourceGroup {
         listOfResourceTypesAllowed = "Microsoft.Authorization/locks",
         "Microsoft.Authorization/policyAssignments",
         "Microsoft.Authorization/roleAssignments",
-        "Microsoft.Storage/*"
+        "Microsoft.Storage/locations",
+        "Microsoft.Storage/locations/*",
+        "Microsoft.Storage/storageAccounts",
+        "Microsoft.Storage/storageAccounts/*",
+        "Microsoft.Storage/operations",
+        "Microsoft.Storage/checkNameAvailability",
+        "Microsoft.Storage/usage"
     }
     
 
@@ -275,7 +281,11 @@ Deploy the Azure Resource Management Template.
 #>
 $Name = (-Join("1.0-Landing-Zone-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-Date).Year,"-",(Get-Date).Hour,(Get-Date).Minute))
 New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-NETWORK-RG")) `
--TemplateFile .\1.0-Landing-Zone.json -TemplateParameterFile ..\..\CustomerData\1.0-Landing-Zone\1.0-Landing-Zone.parameters.json 
+-TemplateFile .\1.0-Landing-Zone.json -TemplateParameterFile ..\..\CustomerData\1.0-Landing-Zone\1.0-Landing-Zone.parameters.json
+
+New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-STORAGE-RG")) `
+-TemplateFile .\1.0.2.0-Landing-Zone-Log-Analytics-Storage.json -Company_Prefix $ResourceGroups.Company_Prefix -Environment $ResourceGroups.Environment 
+
 
 <#####################################################################################################################
 END OF RESOURCES

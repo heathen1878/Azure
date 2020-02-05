@@ -283,10 +283,14 @@ $Name = (-Join("1.0-Landing-Zone-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-
 New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-NETWORK-RG")) `
 -TemplateFile .\1.0-Landing-Zone.json -TemplateParameterFile ..\..\CustomerData\1.0-Landing-Zone\1.0-Landing-Zone.parameters.json
 
+$Name = (-Join("1.0-Landing-Zone-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-Date).Year,"-",(Get-Date).Hour,(Get-Date).Minute))
 New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-STORAGE-RG")) `
 -TemplateFile .\1.0.2.0-Landing-Zone-Log-Analytics-Storage.json -Company_Prefix $ResourceGroups.Company_Prefix -Environment $ResourceGroups.Environment 
 
-
+$Name = (-Join("1.0-Landing-Zone-",(Get-Date).Day,"-",(Get-Date).Month,"-",(Get-Date).Year,"-",(Get-Date).Hour,(Get-Date).Minute))
+New-AzResourceGroupDeployment -Name $Name -ResourceGroupName (-Join($ResourceGroups.Company_Prefix,"-",(-join($ResourceGroups.Location.Split(" ")).ToUpper()),"-",$ResourceGroups.Environment.ToUpper(),"-SHAREDSERVICES-RG")) `
+-TemplateFile .\1.0.2.1-Landing-Zone-Log-Analytics.json -Company_Prefix $ResourceGroups.Company_Prefix -Environment $ResourceGroups.Environment
+ 
 <#####################################################################################################################
 END OF RESOURCES
 #####################################################################################################################>

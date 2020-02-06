@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Company_Prefix":{
+            "type": "string",
+            "defaultValue": "XXX",
+            "metadata": {
+                "description": "Abbreviation of the company name"
+            }
+        },
+        "Environment" :{
+            "type": "string",
+            "defaultValue": "TEST",
+            "metadata": {
+                "description": "Dev, Test, Prod, Training...etc"
+            }
+        },
+        "Location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Resource group location"
+            }
+        }
+    },
+    "variables": {
+        "deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),'-',toUpper(parameters('location')),'-',toUpper(parameters('Environment')))]",
+        "RecoveryServicesVault": "[concat(variables('deployment_Prefix'),'-RSV')]",
+        "LogAnalyticsWorkspace": "[concat(variables('deployment_Prefix'),'-SHAREDSVCS-LOG')]",
+        "LogAnalyticsWorkspace_Id": "[resourceId('Microsoft.OperationalInsights/Workspaces/', variables('LogAnalyticsWorkspace'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.RecoveryServices/vaults",
+            "apiVersion": "2016-06-01",
+            "name": "[variables('RecoveryServicesVault')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "RS0",
+                "tier": "Standard"
+            },
+            "properties": {}
+        },
+        {
+            "type": "microsoft.recoveryservices/vaults/providers/diagnosticSettings",
+            "name": "[concat(variables('RecoveryServicesVault'), '/microsoft.insights/', variables('LogAnalyticsWorkspace'))]",
+            "apiVersion": "2017-05-01-preview",
+            "dependsOn": [
+                "[resourceId('Microsoft.RecoveryServices/vaults/', variables('RecoveryServicesVault'))]"
+            ],
+            "properties": {
+                "name": "[concat(variables('RecoveryServicesVault'),'-DIAGNOSTICS')]",
+                "workspaceId": "[variables('LogAnalyticsWorkspace_Id')]",
+                "logs": [
+                    {
+                        "category": "AzureBackupReport",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "days": 365,
+                            "enabled": false
+                        }
+                    }
+                ],
+                "metrics": []
+            }
+        }
+    ]
+}

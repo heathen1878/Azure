@@ -28,7 +28,7 @@
         }
     },
     "variables": {
-        "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),toUpper(parameters('location')),toUpper(parameters('Environment')))]",
+        "Deployment_Prefix": "[concat(toUpper(parameters('Company_Prefix')),'-',toUpper(parameters('location')),'-',toUpper(parameters('Environment')))]",
         "Key_Vault_Name": "[concat(variables('Deployment_Prefix'),'-SHAREDSVCS-KV')]"
     },
     "resources": [
@@ -47,7 +47,7 @@
                 "enabledForTemplateDeployment": true,
                 "tenantId": "[subscription().tenantId]",
                 "sku": {
-                    "name": "premium",
+                    "name": "standard",
                     "family": "A"
                 },
                 "networkAcls": {
@@ -104,18 +104,6 @@
                         }
                     }
                 ]
-            }
-        },
-        {
-            "comments": "Resource lock on key vault",
-            "type": "Microsoft.KeyVault/vaults/providers/locks",
-            "name": "[concat(variables('Key_Vault_Name'), '/Microsoft.Authorization/keyVaultDoNotDelete')]",
-            "apiVersion": "2016-09-01",
-            "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', variables('Key_Vault_Name'))]"
-            ],
-            "properties": {
-                "level": "CannotDelete"
             }
         }
     ],

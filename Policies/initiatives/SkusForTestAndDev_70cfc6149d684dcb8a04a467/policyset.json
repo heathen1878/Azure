@@ -1,0 +1,64 @@
+{
+ "properties": {
+  "displayName": "SkusForTestAndDev",
+  "policyType": "Custom",
+  "description": "",
+  "metadata": {
+   "parameterScopes": {
+    "listOfAllowedSKUs": "/subscriptions/f83bd36f-078b-4e04-bbb2-69bce23f4bba"
+   },
+   "createdBy": "39158c39-4286-40e4-8775-15fb8c3f2104",
+   "createdOn": "2021-02-13T15:32:06.7918208Z",
+   "updatedBy": "39158c39-4286-40e4-8775-15fb8c3f2104",
+   "updatedOn": "2021-02-13T15:43:35.9288283Z",
+   "category": "Cost Saving",
+   "version": "1.0"
+  },
+  "parameters": {
+   "VMSKus": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "Allowed SKUs"
+    },
+    "defaultValue": [
+     "Basic_A0"
+    ]
+   },
+   "StorageSKUs": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "StorageSKUs"
+    },
+    "defaultValue": [
+     "standard_lrs"
+    ]
+   }
+  },
+  "policyDefinitions": [
+   {
+    "policyDefinitionReferenceId": "Allowed storage account SKUs_1",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/7433c107-6db4-4ad1-b57a-a76dce0154a1",
+    "parameters": {
+     "listOfAllowedSKUs": {
+      "value": "[parameters('StorageSKUs')]"
+     }
+    },
+    "groupNames": []
+   },
+   {
+    "policyDefinitionReferenceId": "Allowed virtual machine size SKUs_1",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/cccc23c7-8427-4f53-ad12-b6a63eb452b3",
+    "parameters": {
+     "listOfAllowedSKUs": {
+      "value": "[parameters('VMSKus')]"
+     }
+    },
+    "groupNames": []
+   }
+  ],
+  "policyDefinitionGroups": []
+ },
+ "id": "/subscriptions/f83bd36f-078b-4e04-bbb2-69bce23f4bba/providers/Microsoft.Authorization/policySetDefinitions/70cfc6149d684dcb8a04a467",
+ "type": "Microsoft.Authorization/policySetDefinitions",
+ "name": "70cfc6149d684dcb8a04a467"
+}
